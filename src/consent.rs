@@ -10,9 +10,8 @@ pub fn detect_locale(accept_language: Option<&str>) -> String {
         h.split(',').next().map(|s| {
             s.split(';')
                 .next()
-                .map(str::trim)
-                .unwrap_or("")
-                .replace('-', "_")
+                .map(|part| part.trim().replace('-', "_"))
+                .unwrap_or_default()
         })
     });
     match parsed {

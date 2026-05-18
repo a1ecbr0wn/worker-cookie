@@ -51,9 +51,12 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 
 ### 5. Consent Revocation
 
-- Small icon/button in page footer or corner allows user to reopen banner
+- Small cookie icon/button fixed to the viewport corner allows user to reopen banner
 - User can change consent choice at any time
 - Updated choice overwrites previous cookie value
+- Icon is an inline SVG (24×24) — no external request, no emoji dependency
+- Icon colour configurable via `[settings]` (see Configuration below); defaults to `#d2ebff`
+- Icon position configurable via `[settings]` `bottom` and `right` pixel offsets
 
 ### 6. Multi-language Support
 
@@ -169,6 +172,8 @@ tracking = [
 - **Banner Style**: Choose positioning style and overlay opacity
 - **Privacy Policy**: Optional URL and link text per locale
 - **Script Lists**: Define which scripts are essential vs. non-essential with URLs and metadata
+- **Settings button position**: Optional `bottom` and `right` pixel offsets via `[settings]`
+- **Settings button icon colour**: Optional CSS colour string via `[settings].color` (default `#d2ebff`)
 
 ## Implementation Details
 

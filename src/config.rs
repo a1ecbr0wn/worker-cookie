@@ -2,6 +2,7 @@ use serde::Deserialize;
 use std::collections::HashMap;
 use worker::{Env, Result};
 
+/// Visual and textual configuration for a single locale's cookie banner.
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct BannerConfig {
     pub theme: String,
@@ -10,18 +11,38 @@ pub struct BannerConfig {
     pub message: String,
 }
 
+/// Global position and appearance settings for the settings button, configured via `[settings]`.
+///
+/// All fields are optional. Omitting `bottom` or `right` keeps the CSS defaults (16px).
+/// Omitting `color` defaults to `#d2ebff` (light blue matching the project icon).
+#[derive(Debug, Clone, Deserialize, PartialEq, Default)]
+pub struct SettingsConfig {
+    /// Pixels from the bottom of the viewport for the settings button.
+    #[serde(default)]
+    pub bottom: Option<u16>,
+    /// Pixels from the right of the viewport for the settings button.
+    #[serde(default)]
+    pub right: Option<u16>,
+    /// CSS hex color for the settings button cookie icon fill (e.g. `#d2ebff`). Defaults to `#d2ebff`.
+    #[serde(default)]
+    pub color: Option<String>,
+}
+
+/// Labels for the accept and decline consent buttons.
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct ButtonsConfig {
     pub accept_label: String,
     pub decline_label: String,
 }
 
+/// Optional privacy policy link shown inside the banner.
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct PrivacyPolicyConfig {
     pub url: String,
     pub link_text: String,
 }
 
+/// A single script entry with a human-readable name and a URL.
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 pub struct ScriptEntry {
     /// Human-readable label used in config for identification; not used at runtime.
@@ -30,6 +51,7 @@ pub struct ScriptEntry {
     pub src: String,
 }
 
+/// Lists of essential and tracking scripts to be managed by the consent banner.
 #[derive(Debug, Clone, Deserialize, Default, PartialEq)]
 pub struct ScriptsConfig {
     #[serde(default)]
@@ -40,12 +62,15 @@ pub struct ScriptsConfig {
 
 /// Locale-keyed configuration map where the empty string `""` represents the
 /// unqualified default section (e.g. `[banner]` with no locale suffix).
+///
+/// `settings` provides global settings button positioning and icon colour that apply across all locales.
 #[derive(Debug, Clone)]
 pub struct WorkerConfig {
     pub banner: HashMap<String, BannerConfig>,
     pub buttons: HashMap<String, ButtonsConfig>,
     pub privacy_policy: HashMap<String, PrivacyPolicyConfig>,
     pub scripts: ScriptsConfig,
+    pub settings: SettingsConfig,
 }
 
 /// Splits a TOML table into a locale-keyed map, with an optional unqualified
@@ -92,6 +117,9 @@ where
 /// default (e.g. `[banner]` with `theme = "..."`), or both. The unqualified
 /// default is stored under the `""` key and acts as the final fallback during
 /// locale resolution.
+///
+/// The `[settings]` section is optional and applies global settings button positioning
+/// (bottom and right offsets). If absent, defaults to empty (CSS defaults apply).
 pub fn parse(raw: &str) -> std::result::Result<WorkerConfig, String> {
     let mut table: toml::Table = raw.parse().map_err(|e| format!("TOML parse error: {e}"))?;
 
@@ -133,11 +161,17 @@ pub fn parse(raw: &str) -> std::result::Result<WorkerConfig, String> {
         None => ScriptsConfig::default(),
     };
 
+    let settings: SettingsConfig = match table.remove("settings") {
+        Some(v) => v.try_into().map_err(|e| format!("[settings]: {e}"))?,
+        None => SettingsConfig::default(),
+    };
+
     Ok(WorkerConfig {
         banner: split_section(&banner_table)?,
         buttons: split_section(&buttons_table)?,
         privacy_policy: split_section(&privacy_table)?,
         scripts,
+        settings,
     })
 }
 
@@ -359,5 +393,26 @@ decline_label = "No"
 [scripts]
 "#;
         assert!(parse(toml).is_err());
+    }
+
+    #[test]
+    fn parses_settings_section() {
+        let toml =
+            format!("{VALID_TOML}\n[settings]\nbottom = 24\nright = 32\ncolor = \"#aabbcc\"\n");
+        let cfg = parse(&toml).expect("settings section should parse");
+        assert_eq!(
+            cfg.settings,
+            SettingsConfig {
+                bottom: Some(24),
+                right: Some(32),
+                color: Some("#aabbcc".to_string()),
+            }
+        );
+    }
+
+    #[test]
+    fn settings_defaults_when_absent() {
+        let cfg = parse(VALID_TOML).expect("valid TOML should parse");
+        assert_eq!(cfg.settings, SettingsConfig::default());
     }
 }
