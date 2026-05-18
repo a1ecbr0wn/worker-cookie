@@ -51,6 +51,25 @@ Lists the scripts to load based on consent. Each entry has a `name` (for your re
 | `essential` | array | Scripts always loaded, regardless of consent. |
 | `tracking` | array | Scripts loaded only when the visitor accepts cookies. |
 
+### `[settings]` _(optional)_
+
+Global settings that apply across all locales. Controls the position and appearance of the settings button (the cookie icon that lets visitors reopen the banner).
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button. |
+| `right` | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button. |
+| `color` | string | `#d2ebff` | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
+
+```toml
+[settings]
+bottom = 24        # position the icon 24px from the bottom
+right = 32         # position the icon 32px from the right
+color = "#ff9900"  # custom icon colour
+```
+
+Omitting `[settings]` entirely, or omitting individual fields, keeps the CSS defaults.
+
 ### Full example
 
 ```toml
@@ -89,4 +108,9 @@ essential = [
 tracking = [
   { name = "google-analytics", src = "https://www.googletagmanager.com/gtag/js" }
 ]
+
+[settings]
+bottom = 24
+right = 32
+color = "#d2ebff"
 ```

@@ -3,10 +3,11 @@ use crate::config::WorkerConfig;
 
 /// Injects the cookie consent banner and theme CSS into an HTML response.
 ///
-/// When `existing_consent` is `Some`, the banner is rendered pre-hidden and the revoke
+/// When `existing_consent` is `Some`, the banner is rendered pre-hidden and the settings
 /// button is shown; the inline script applies consent immediately without reading the cookie.
 /// When `None`, the banner starts visible and the script reads the cookie on load.
 /// CSS is always injected into `<head>`; the banner is inserted before `</body>`.
+/// Global settings button positioning from `cfg.settings` is applied to all rendered banners.
 /// Returns the original HTML unmodified if the resolved locale has no configuration.
 pub fn inject(
     html: &str,
@@ -27,7 +28,14 @@ pub fn inject(
     let css = include_str!("../assets/themes.css");
 
     let html = insert_before(html, "</head>", &format!("<style>{}</style>", css));
-    let banner_html = render_banner_html(banner, buttons, privacy, &cfg.scripts, existing_consent);
+    let banner_html = render_banner_html(
+        banner,
+        buttons,
+        privacy,
+        &cfg.scripts,
+        &cfg.settings,
+        existing_consent,
+    );
     insert_before_last(&html, "</body>", &banner_html)
 }
 
@@ -85,7 +93,9 @@ fn resolve_locale(cfg: &WorkerConfig, locale: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::config::{BannerConfig, ButtonsConfig, ScriptEntry, ScriptsConfig, WorkerConfig};
+    use crate::config::{
+        BannerConfig, ButtonsConfig, ScriptEntry, ScriptsConfig, SettingsConfig, WorkerConfig,
+    };
     use std::collections::HashMap;
 
     /// Constructs a test WorkerConfig with both an unqualified default section (under `""`)
@@ -130,6 +140,7 @@ mod tests {
             buttons,
             privacy_policy: HashMap::new(),
             scripts: ScriptsConfig::default(),
+            settings: SettingsConfig::default(),
         }
     }
 
@@ -166,6 +177,7 @@ mod tests {
                     src: "https://ga.example.com/ga.js".to_string(),
                 }],
             },
+            settings: SettingsConfig::default(),
         }
     }
 
@@ -190,13 +202,13 @@ mod tests {
     #[test]
     fn banner_visible_when_no_consent() {
         let result = inject(FULL_PAGE, &make_config(), "en_GB", None);
-        // Revoke button should be hidden; banner should not have display:none
-        assert!(result.contains(r#"id="cookie-revoke-btn""#));
+        // Settings button should be hidden; banner should not have display:none
+        assert!(result.contains(r#"id="cookie-settings-btn""#));
         // The banner div itself should not carry display:none
         let banner_pos = result.find(r#"id="cookie-banner""#).unwrap();
-        let revoke_pos = result.find(r#"id="cookie-revoke-btn""#).unwrap();
-        // display:none on revoke, not on banner
-        let between = &result[banner_pos..revoke_pos];
+        let settings_pos = result.find(r#"id="cookie-settings-btn""#).unwrap();
+        // display:none on settings btn, not on banner
+        let between = &result[banner_pos..settings_pos];
         assert!(!between.contains("display:none"));
     }
 
@@ -211,7 +223,7 @@ mod tests {
     }
 
     #[test]
-    fn revoke_button_visible_when_consent_exists() {
+    fn settings_button_visible_when_consent_exists() {
         let result = inject(FULL_PAGE, &make_config(), "en_GB", Some("accepted"));
         assert!(result.contains(r#"style="display:block""#));
     }
