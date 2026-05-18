@@ -61,18 +61,25 @@ fn insert_before_last(html: &str, tag: &str, snippet: &str) -> String {
 
 /// Maps a detected locale to an available configuration locale, with three-tier fallback.
 ///
-/// Attempts exact match first, then language-prefix match (e.g. `en_US` → `en_GB`),
-/// then falls back to `"en_GB"`. The language prefix is extracted by splitting on the first
-/// underscore; if no underscore is present, the entire locale string is used for matching.
+/// Attempts exact match first (e.g. `en_GB` → `en_GB`), then language-prefix match
+/// (e.g. `en_US` → `en_GB`), then falls back to the unqualified default section stored
+/// under `""`. Returns `""` when no locale matches and no default is configured, causing
+/// `inject` to pass the page through unmodified. The language prefix is extracted by
+/// splitting on the first underscore; if no underscore is present, the entire locale
+/// string is used for matching.
 fn resolve_locale(cfg: &WorkerConfig, locale: &str) -> String {
     if cfg.banner.contains_key(locale) {
         return locale.to_string();
     }
     let lang = locale.split_once('_').map_or(locale, |(prefix, _)| prefix);
-    match cfg.banner.keys().find(|k| k.starts_with(lang)) {
-        Some(k) => k.clone(),
-        None => "en_GB".to_string(),
+    if let Some(k) = cfg
+        .banner
+        .keys()
+        .find(|k| !k.is_empty() && k.starts_with(lang))
+    {
+        return k.clone();
     }
+    String::new()
 }
 
 #[cfg(test)]
@@ -80,6 +87,51 @@ mod tests {
     use super::*;
     use crate::config::{BannerConfig, ButtonsConfig, ScriptEntry, ScriptsConfig, WorkerConfig};
     use std::collections::HashMap;
+
+    /// Constructs a test WorkerConfig with both an unqualified default section (under `""`)
+    /// and a locale-specific section for `en_GB`, used to verify fallback behavior.
+    fn make_config_with_default() -> WorkerConfig {
+        let mut banner = HashMap::new();
+        banner.insert(
+            String::new(),
+            BannerConfig {
+                theme: "minimal".to_string(),
+                style: "bottom".to_string(),
+                overlay_opacity: 0,
+                message: "Default message.".to_string(),
+            },
+        );
+        banner.insert(
+            "en_GB".to_string(),
+            BannerConfig {
+                theme: "hacker".to_string(),
+                style: "box-bottom-right".to_string(),
+                overlay_opacity: 50,
+                message: "English message.".to_string(),
+            },
+        );
+        let mut buttons = HashMap::new();
+        buttons.insert(
+            String::new(),
+            ButtonsConfig {
+                accept_label: "OK".to_string(),
+                decline_label: "No".to_string(),
+            },
+        );
+        buttons.insert(
+            "en_GB".to_string(),
+            ButtonsConfig {
+                accept_label: "Accept".to_string(),
+                decline_label: "Decline".to_string(),
+            },
+        );
+        WorkerConfig {
+            banner,
+            buttons,
+            privacy_policy: HashMap::new(),
+            scripts: ScriptsConfig::default(),
+        }
+    }
 
     fn make_config() -> WorkerConfig {
         let mut banner = HashMap::new();
@@ -195,9 +247,9 @@ mod tests {
     }
 
     #[test]
-    fn locale_no_match_falls_back_to_en_gb() {
+    fn locale_no_match_without_default_passes_through() {
         let result = inject(FULL_PAGE, &make_config(), "zh_CN", None);
-        assert!(result.contains("We use cookies."));
+        assert_eq!(result, FULL_PAGE);
     }
 
     #[test]
@@ -213,9 +265,9 @@ mod tests {
     }
 
     #[test]
-    fn resolve_locale_no_match_defaults_to_en_gb() {
+    fn resolve_locale_no_match_returns_empty_string() {
         let cfg = make_config();
-        assert_eq!(resolve_locale(&cfg, "zh_CN"), "en_GB");
+        assert_eq!(resolve_locale(&cfg, "zh_CN"), "");
     }
 
     #[test]
@@ -224,5 +276,24 @@ mod tests {
         // "en" has no underscore; the full string is used as the prefix,
         // which matches "en_GB" via starts_with.
         assert_eq!(resolve_locale(&cfg, "en"), "en_GB");
+    }
+
+    #[test]
+    fn resolve_locale_falls_back_to_default_when_no_locale_matches() {
+        let cfg = make_config_with_default();
+        assert_eq!(resolve_locale(&cfg, "zh_CN"), "");
+    }
+
+    #[test]
+    fn locale_no_match_uses_default_section() {
+        let result = inject(FULL_PAGE, &make_config_with_default(), "zh_CN", None);
+        assert!(result.contains("Default message."));
+    }
+
+    #[test]
+    fn locale_exact_match_takes_priority_over_default() {
+        let result = inject(FULL_PAGE, &make_config_with_default(), "en_GB", None);
+        assert!(result.contains("English message."));
+        assert!(!result.contains("Default message."));
     }
 }
