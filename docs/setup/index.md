@@ -85,11 +85,30 @@ Or deploy from the Cloudflare dashboard under **Workers → your worker → Depl
 
 ### 6. Route traffic through your worker
 
-In the Cloudflare dashboard, add a
-[Worker Route](https://developers.cloudflare.com/workers/configuration/routing/routes/)
-matching your site's domain and pointing to your worker. All HTML responses will
-have the cookie banner injected automatically. Non-HTML responses (images,
-scripts, JSON) pass through unmodified.
+**Prerequisite**: your site's DNS must be managed by Cloudflare and the record must
+be proxied (orange cloud icon in the Cloudflare DNS dashboard). If your site is not
+behind Cloudflare's proxy, workers cannot intercept its traffic.
+
+The worker acts as a transparent proxy: it receives the request, fetches the page
+from your origin server, injects the cookie banner into HTML responses, and returns
+the result to the visitor. Non-HTML responses (images, scripts, JSON) are passed
+through unmodified.
+
+To wire this up:
+
+1. In the [Cloudflare dashboard](https://dash.cloudflare.com), select your account
+   and then your site's zone.
+2. Go to **Workers Routes** (under the **Workers** section in the left sidebar).
+3. Click **Add route**.
+4. Set the **Route** pattern to match all pages on your site, e.g.:
+   ```
+   example.com/*
+   ```
+5. Set the **Worker** to the name you gave your worker in `wrangler.jsonc`.
+6. Save.
+
+From this point on, every request matching the route pattern runs through your
+worker. All HTML pages will have the cookie banner injected automatically.
 
 ### Releases
 
@@ -103,5 +122,3 @@ GitHub Release.
 ```sh
 wrangler dev --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"
 ```
-
-.

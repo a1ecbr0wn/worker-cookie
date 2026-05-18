@@ -35,7 +35,7 @@
   font-size: 13px;
 }
 
-.cookie-revoke-btn {
+.cookie-settings-btn {
   position: fixed;
   bottom: 16px;
   right: 16px;
@@ -49,7 +49,7 @@
   transition: opacity 0.2s;
 }
 
-.cookie-revoke-btn:hover {
+.cookie-settings-btn:hover {
   opacity: 1;
 }
 
