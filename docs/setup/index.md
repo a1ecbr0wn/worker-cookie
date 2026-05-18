@@ -103,3 +103,5 @@ GitHub Release.
 ```sh
 wrangler dev --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"
 ```
+
+.
