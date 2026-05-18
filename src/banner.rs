@@ -101,7 +101,7 @@ pub fn render_banner_html(
 ///
 /// Renders a 24×24 cookie as a closed outline path: the cookie body (circle r=10, centre 12,12)
 /// with a bite taken from the upper-right (bite circle r=6, centre 20,4). The two circles
-/// intersect at (21.7, 9.7) and (14.3, 2.3); the path traces the short concave bite arc
+/// intersect at approximately (21.7, 9.7) and (14.3, 2.3); the path traces the short concave bite arc
 /// between those points, then the long cookie arc back around. No `fill-rule` tricks or
 /// `<clipPath>` IDs are needed, so there are no fill artifacts and no ID-collision risk.
 /// Chip dots are `<circle>` elements overlaid with translucent black. The SVG is aria-hidden;
