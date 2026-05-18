@@ -62,12 +62,13 @@ fn insert_before_last(html: &str, tag: &str, snippet: &str) -> String {
 /// Maps a detected locale to an available configuration locale, with three-tier fallback.
 ///
 /// Attempts exact match first, then language-prefix match (e.g. `en_US` → `en_GB`),
-/// then falls back to `"en_GB"`.
+/// then falls back to `"en_GB"`. The language prefix is extracted by splitting on the first
+/// underscore; if no underscore is present, the entire locale string is used for matching.
 fn resolve_locale(cfg: &WorkerConfig, locale: &str) -> String {
     if cfg.banner.contains_key(locale) {
         return locale.to_string();
     }
-    let lang = locale.split('_').next().unwrap_or("en");
+    let lang = locale.split_once('_').map_or(locale, |(prefix, _)| prefix);
     match cfg.banner.keys().find(|k| k.starts_with(lang)) {
         Some(k) => k.clone(),
         None => "en_GB".to_string(),
@@ -215,5 +216,13 @@ mod tests {
     fn resolve_locale_no_match_defaults_to_en_gb() {
         let cfg = make_config();
         assert_eq!(resolve_locale(&cfg, "zh_CN"), "en_GB");
+    }
+
+    #[test]
+    fn resolve_locale_bare_lang_code_matches_by_prefix() {
+        let cfg = make_config();
+        // "en" has no underscore; the full string is used as the prefix,
+        // which matches "en_GB" via starts_with.
+        assert_eq!(resolve_locale(&cfg, "en"), "en_GB");
     }
 }

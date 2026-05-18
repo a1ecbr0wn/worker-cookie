@@ -16,21 +16,23 @@ pub fn detect_locale(accept_language: Option<&str>) -> String {
         })
     });
     match parsed {
-        Some(ref s) if !s.is_empty() => parsed.unwrap_or_default(),
+        Some(s) if !s.is_empty() => s,
         _ => "en_GB".to_string(),
     }
 }
 
 /// Extracts the value of the `userConsent` cookie from a raw `Cookie` header value.
 ///
-/// Returns `None` when the header is absent or the cookie is not present.
+/// Returns `None` when the header is absent, the cookie is not present, or the value is not
+/// one of the recognised consent states (`"accepted"` or `"declined"`). Unrecognised values
+/// are silently discarded to prevent cookie-derived content from reaching HTML/JS output.
 pub fn get_consent_cookie(cookie_header: Option<&str>) -> Option<String> {
     let header = cookie_header?;
     header.split(';').find_map(|pair| {
         let mut parts = pair.splitn(2, '=');
         let name = parts.next()?.trim();
         let value = parts.next()?.trim();
-        if name == "userConsent" {
+        if name == "userConsent" && (value == "accepted" || value == "declined") {
             Some(value.to_string())
         } else {
             None
