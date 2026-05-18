@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "cookie-worker",
+  "main": "build/worker/shim.mjs",
+  "compatibility_date": "2026-05-17",
+
+  "build": {
+    "command": "cargo install -q worker-build && worker-build --release"
+  },
+
+  "vars": {
+    // Set WORKER_CONFIG to the contents of config/worker.toml
+    // For local dev, put the TOML content in .dev.vars instead
+    "WORKER_CONFIG": ""
+  },
+
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

@@ -1,0 +1,50 @@
+[banner.en_GB]
+theme = "hacker"
+style = "box-bottom-right"
+overlay_opacity = 50
+message = "We use cookies to improve your experience. Essential cookies are always enabled."
+
+[buttons.en_GB]
+accept_label = "Accept All"
+decline_label = "Decline Non-Essential"
+
+[privacy_policy.en_GB]
+url = "https://example.com/privacy"
+link_text = "Read our privacy policy"
+
+[banner.fr_FR]
+theme = "hacker"
+style = "box-bottom-right"
+overlay_opacity = 50
+message = "Nous utilisons des cookies pour améliorer votre expérience. Les cookies essentiels sont toujours activés."
+
+[buttons.fr_FR]
+accept_label = "Tout accepter"
+decline_label = "Refuser les non essentiels"
+
+[privacy_policy.fr_FR]
+url = "https://example.com/privacy"
+link_text = "Lire notre politique de confidentialité"
+
+[banner.de_DE]
+theme = "hacker"
+style = "box-bottom-right"
+overlay_opacity = 50
+message = "Wir verwenden Cookies, um Ihre Erfahrung zu verbessern. Wesentliche Cookies sind immer aktiviert."
+
+[buttons.de_DE]
+accept_label = "Alle akzeptieren"
+decline_label = "Nicht wesentliche ablehnen"
+
+[privacy_policy.de_DE]
+url = "https://example.com/privacy"
+link_text = "Datenschutzrichtlinie lesen"
+
+[scripts]
+essential = [
+  { name = "site-core", src = "/js/core.js" }
+]
+tracking = [
+  { name = "google-analytics", src = "https://www.googletagmanager.com/gtag/js" },
+  { name = "facebook-pixel", src = "https://connect.facebook.net/en_US/fbevents.js" }
+]

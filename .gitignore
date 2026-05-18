@@ -1,0 +1,33 @@
+# Build
+Cargo.lock
+/target
+/dist
+/build
+**/*.rs.bk
+wasm-pack.log
+
+# IDE
+/.vscode
+/.idea
+*.iml
+
+# Checksums
+*.sha
+*.md5
+
+# MacOS
+.DS_Store
+
+# node
+/node_modules
+package-lock.json
+
+# Rust
+*.rlib
+
+# wrangler
+/.wrangler
+
+# Others
+.claude
+.dev.vars

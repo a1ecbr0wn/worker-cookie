@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Banner Theme Mockups</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            padding: 40px 20px;
+        }
+
+        .mockup-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 60px;
+            color: #333;
+        }
+
+        .themes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .theme-section {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .theme-header {
+            padding: 20px;
+            background: #f9f9f9;
+            border-bottom: 1px solid #eee;
+        }
+
+        .theme-header h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .theme-header p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .preview {
+            padding: 40px;
+            min-height: 400px;
+            position: relative;
+            background: #fafafa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ====== HACKER THEME ====== */
+        .hacker-preview {
+            background: #0a0e27;
+            background-image: 
+                linear-gradient(0deg, transparent 24%, rgba(0, 255, 0, 0.05) 25%, rgba(0, 255, 0, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 0, 0.05) 75%, rgba(0, 255, 0, 0.05) 76%, transparent 77%, transparent),
+                linear-gradient(90deg, transparent 24%, rgba(0, 255, 0, 0.05) 25%, rgba(0, 255, 0, 0.05) 26%, transparent 27%, transparent 74%, rgba(0, 255, 0, 0.05) 75%, rgba(0, 255, 0, 0.05) 76%, transparent 77%, transparent);
+            background-size: 50px 50px;
+        }
+
+        .hacker-banner {
+            background: rgba(10, 14, 39, 0.95);
+            border: 2px solid #00ff00;
+            border-radius: 2px;
+            padding: 24px;
+            max-width: 420px;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3), inset 0 0 20px rgba(0, 255, 0, 0.05);
+        }
+
+        .hacker-banner .title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hacker-banner .message {
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #00ff00;
+        }
+
+        .hacker-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hacker-btn {
+            flex: 1;
+            padding: 10px 16px;
+            border: 2px solid #00ff00;
+            background: transparent;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            border-radius: 2px;
+        }
+
+        .hacker-btn:hover {
+            background: #00ff00;
+            color: #0a0e27;
+            text-shadow: none;
+        }
+
+        .hacker-btn.primary {
+            background: #00ff00;
+            color: #0a0e27;
+        }
+
+        .hacker-btn.primary:hover {
+            background: #00cc00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        /* ====== MINIMAL THEME ====== */
+        .minimal-preview {
+            background: #ffffff;
+        }
+
+        .minimal-banner {
+            background: white;
+            border-top: 3px solid #1a1a1a;
+            padding: 24px;
+            max-width: 420px;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .minimal-banner .title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #1a1a1a;
+            font-family: 'Georgia', serif;
+            letter-spacing: -0.3px;
+        }
+
+        .minimal-banner .message {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: #666;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .minimal-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .minimal-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: #f0f0f0;
+            color: #1a1a1a;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 0;
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            text-transform: none;
+        }
+
+        .minimal-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .minimal-btn.primary {
+            background: #1a1a1a;
+            color: white;
+        }
+
+        .minimal-btn.primary:hover {
+            background: #333;
+        }
+
+        /* ====== DARK ELEGANT THEME ====== */
+        .elegant-preview {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        .elegant-banner {
+            background: rgba(26, 26, 46, 0.95);
+            border-left: 4px solid #e94560;
+            padding: 28px;
+            max-width: 420px;
+            backdrop-filter: blur(10px);
+            border-radius: 4px;
+        }
+
+        .elegant-banner .title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            letter-spacing: -0.5px;
+        }
+
+        .elegant-banner .message {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            color: #b0b0b0;
+        }
+
+        .elegant-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .elegant-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #404050;
+            background: transparent;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .elegant-btn:hover {
+            border-color: #e94560;
+            color: #e94560;
+        }
+
+        .elegant-btn.primary {
+            background: #e94560;
+            border-color: #e94560;
+            color: white;
+        }
+
+        .elegant-btn.primary:hover {
+            background: #d43550;
+            border-color: #d43550;
+        }
+
+        /* ====== SKY THEME ====== */
+        .sky-preview {
+            background: #f0f0f0;
+        }
+
+        .sky-banner {
+            background: #e3f2fd;
+            border: 2px solid #1976d2;
+            border-radius: 8px;
+            padding: 28px;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.15);
+        }
+
+        .sky-banner .title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #0d47a1;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .sky-banner .message {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            color: #1565c0;
+        }
+
+        .sky-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .sky-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #1976d2;
+            background: white;
+            color: #1976d2;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .sky-btn:hover {
+            background: #bbdefb;
+            border-color: #0d47a1;
+        }
+
+        .sky-btn.primary {
+            background: #1976d2;
+            color: white;
+        }
+
+        .sky-btn.primary:hover {
+            background: #1565c0;
+        }
+
+        /* ====== SAGE THEME ====== */
+        .sage-preview {
+            background: #f0f0f0;
+        }
+
+        .sage-banner {
+            background: #c8e6c9;
+            border: 2px solid #388e3c;
+            border-radius: 8px;
+            padding: 28px;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(56, 142, 60, 0.15);
+        }
+
+        .sage-banner .title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1b5e20;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .sage-banner .message {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            color: #2e7d32;
+        }
+
+        .sage-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .sage-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #388e3c;
+            background: white;
+            color: #388e3c;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .sage-btn:hover {
+            background: #a5d6a7;
+            border-color: #1b5e20;
+        }
+
+        .sage-btn.primary {
+            background: #388e3c;
+            color: white;
+        }
+
+        .sage-btn.primary:hover {
+            background: #2e7d32;
+        }
+
+        /* ====== FIRE THEME ====== */
+        .fire-preview {
+            background: #f0f0f0;
+        }
+
+        .fire-banner {
+            background: #d32f2f;
+            border: 2px solid #b71c1c;
+            border-radius: 8px;
+            padding: 28px;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(211, 47, 47, 0.15);
+        }
+
+        .fire-banner .title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .fire-banner .message {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        .fire-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .fire-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ffffff;
+            background: transparent;
+            color: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .fire-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #ffcccc;
+        }
+
+        .fire-btn.primary {
+            background: #ffffff;
+            color: #d32f2f;
+        }
+
+        .fire-btn.primary:hover {
+            background: #ffcccc;
+            color: #b71c1c;
+        }
+
+        /* ====== EARTH THEME ====== */
+        .earth-preview {
+            background: #f0f0f0;
+        }
+
+        .earth-banner {
+            background: #6d4c41;
+            border: 2px solid #5d4037;
+            border-radius: 8px;
+            padding: 28px;
+            max-width: 420px;
+            box-shadow: 0 4px 12px rgba(93, 64, 55, 0.15);
+        }
+
+        .earth-banner .title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffd700;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .earth-banner .message {
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+            color: #ffd700;
+        }
+
+        .earth-banner .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .earth-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #ffd700;
+            background: transparent;
+            color: #ffd700;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .earth-btn:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-color: #ffed4e;
+        }
+
+        .earth-btn.primary {
+            background: #ffd700;
+            color: #3e2723;
+        }
+
+        .earth-btn.primary:hover {
+            background: #ffed4e;
+            color: #3e2723;
+        }
+
+        /* ====== STYLE VARIANTS ====== */
+        .style-variants {
+            margin-top: 60px;
+            padding-top: 40px;
+            border-top: 2px solid #ddd;
+        }
+
+        .variants-title {
+            font-size: 20px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .variants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .variant-showcase {
+            padding: 20px;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .variant-showcase h3 {
+            font-size: 14px;
+            margin-bottom: 16px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .variant-frame {
+            width: 100%;
+            height: 250px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            display: flex;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Position variants */
+        .variant-centre .variant-frame {
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .variant-bottom .variant-frame {
+            justify-content: center;
+            align-items: flex-end;
+            flex-direction: column;
+        }
+
+        .variant-top .variant-frame {
+            justify-content: center;
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .variant-box-br .variant-frame {
+            justify-content: flex-end;
+            align-items: flex-end;
+            flex-direction: column;
+        }
+
+        .variant-box-bl .variant-frame {
+            justify-content: flex-start;
+            align-items: flex-end;
+            flex-direction: column;
+        }
+
+        .variant-banner-small {
+            background: rgba(10, 14, 39, 0.95);
+            border: 1px solid #00ff00;
+            padding: 12px;
+            max-width: 180px;
+            font-family: 'Courier New', monospace;
+            color: #00ff00;
+            font-size: 11px;
+            border-radius: 2px;
+        }
+
+        .variant-banner-small .message {
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .variant-banner-small .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .variant-banner-small button {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #00ff00;
+            background: transparent;
+            color: #00ff00;
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="mockup-container">
+        <h1>Cookie Banner Theme Designs</h1>
+
+        <div class="themes-grid">
+            <!-- Hacker Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Hacker</h2>
+                    <p>Monospace, green scanline grid, neon glow effect</p>
+                </div>
+                <div class="preview hacker-preview">
+                    <div class="hacker-banner">
+                        <div class="title">> NOTICE</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="hacker-btn">Decline</button>
+                            <button class="hacker-btn primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minimal Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Minimal</h2>
+                    <p>Serif title, clean sans-serif, top border accent</p>
+                </div>
+                <div class="preview minimal-preview">
+                    <div class="minimal-banner">
+                        <div class="title">Cookie Notice</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="minimal-btn">Decline</button>
+                            <button class="minimal-btn primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dark Elegant Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Dark Elegant</h2>
+                    <p>Gradient background, left accent bar, backdrop blur</p>
+                </div>
+                <div class="preview elegant-preview">
+                    <div class="elegant-banner">
+                        <div class="title">Cookie Preferences</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="elegant-btn">Decline</button>
+                            <button class="elegant-btn primary">Accept All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sky Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Sky</h2>
+                    <p>Light blue gradient, blue border, modern sans-serif</p>
+                </div>
+                <div class="preview sky-preview">
+                    <div class="sky-banner">
+                        <div class="title">Cookie Notice</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="sky-btn">Decline</button>
+                            <button class="sky-btn primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sage Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Sage</h2>
+                    <p>Light green gradient, dark green text, modern sans-serif</p>
+                </div>
+                <div class="preview sage-preview">
+                    <div class="sage-banner">
+                        <div class="title">Cookie Notice</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="sage-btn">Decline</button>
+                            <button class="sage-btn primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fire Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Fire</h2>
+                    <p>Light red gradient, red border, white text on primary</p>
+                </div>
+                <div class="preview fire-preview">
+                    <div class="fire-banner">
+                        <div class="title">Cookie Notice</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="fire-btn">Decline</button>
+                            <button class="fire-btn primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earth Theme -->
+            <div class="theme-section">
+                <div class="theme-header">
+                    <h2>Earth</h2>
+                    <p>Brown/tan palette, yellow text accent on primary</p>
+                </div>
+                <div class="preview earth-preview">
+                    <div class="earth-banner">
+                        <div class="title">Cookie Notice</div>
+                        <div class="message">
+                            We use cookies to improve your experience. Essential cookies are always enabled.
+                        </div>
+                        <div class="actions">
+                            <button class="earth-btn">Decline</button>
+                            <button class="earth-btn primary">Accept</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Style Positioning Variants -->
+        <div class="style-variants">
+            <h2 class="variants-title">Positioning Styles (using Hacker theme)</h2>
+            <div class="variants-grid">
+                <div class="variant-showcase variant-centre">
+                    <h3>Centre</h3>
+                    <div class="variant-frame">
+                        <div class="variant-banner-small">
+                            <div style="font-weight: bold; margin-bottom: 8px;">> NOTICE</div>
+                            <div class="message">Cookies improve experience</div>
+                            <div class="actions">
+                                <button>Decline</button>
+                                <button>Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="variant-showcase variant-bottom">
+                    <h3>Bottom (Full Width)</h3>
+                    <div class="variant-frame" style="position: relative;">
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(10, 14, 39, 0.95); border-top: 1px solid #00ff00; padding: 12px; font-family: 'Courier New', monospace; color: #00ff00; font-size: 11px;">
+                            <div style="margin-bottom: 8px;"><span style="color: #00ff00;">> </span>Cookies improve your experience</div>
+                            <div style="display: flex; gap: 12px;">
+                                <button style="flex: 1; padding: 6px; border: 1px solid #00ff00; background: transparent; color: #00ff00; font-family: 'Courier New'; font-size: 10px; cursor: pointer;">Decline</button>
+                                <button style="flex: 1; padding: 6px; border: 1px solid #00ff00; background: #00ff00; color: #0a0e27; font-family: 'Courier New'; font-size: 10px; cursor: pointer;">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="variant-showcase variant-top">
+                    <h3>Top (Full Width)</h3>
+                    <div class="variant-frame" style="position: relative;">
+                        <div style="position: absolute; top: 0; left: 0; right: 0; background: rgba(10, 14, 39, 0.95); border-bottom: 1px solid #00ff00; padding: 12px; font-family: 'Courier New', monospace; color: #00ff00; font-size: 11px;">
+                            <div style="margin-bottom: 8px;"><span style="color: #00ff00;">> </span>Cookies improve your experience</div>
+                            <div style="display: flex; gap: 12px;">
+                                <button style="flex: 1; padding: 6px; border: 1px solid #00ff00; background: transparent; color: #00ff00; font-family: 'Courier New'; font-size: 10px; cursor: pointer;">Decline</button>
+                                <button style="flex: 1; padding: 6px; border: 1px solid #00ff00; background: #00ff00; color: #0a0e27; font-family: 'Courier New'; font-size: 10px; cursor: pointer;">Accept</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="variant-showcase variant-box-br">
+                    <h3>Box Bottom-Right</h3>
+                    <div class="variant-frame">
+                        <div class="variant-banner-small">
+                            <div style="font-weight: bold; margin-bottom: 8px;">> OK?</div>
+                            <div class="message">Cookies improve experience</div>
+                            <div class="actions">
+                                <button>No</button>
+                                <button>Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="variant-showcase variant-box-bl">
+                    <h3>Box Bottom-Left</h3>
+                    <div class="variant-frame" style="position: relative; align-items: stretch;">
+                        <div style="position: absolute; bottom: 16px; left: 16px; background: rgba(10, 14, 39, 0.95); border: 1px solid #00ff00; padding: 12px; max-width: 180px; font-family: 'Courier New', monospace; color: #00ff00; font-size: 11px; border-radius: 2px;">
+                            <div style="font-weight: bold; margin-bottom: 8px;">> OK?</div>
+                            <div style="margin-bottom: 10px; line-height: 1.4;">Cookies improve experience</div>
+                            <div style="display: flex; gap: 6px;">
+                                <button style="flex: 1; padding: 6px 10px; border: 1px solid #00ff00; background: transparent; color: #00ff00; font-family: 'Courier New', monospace; font-size: 10px; cursor: pointer; border-radius: 2px;">No</button>
+                                <button style="flex: 1; padding: 6px 10px; border: 1px solid #00ff00; background: transparent; color: #00ff00; font-family: 'Courier New', monospace; font-size: 10px; cursor: pointer; border-radius: 2px;">Yes</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
