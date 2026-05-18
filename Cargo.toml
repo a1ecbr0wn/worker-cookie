@@ -5,7 +5,7 @@ edition = "2024"
 authors = ["Δ ǀ Ξ ȼ <alec@noser.net>"]
 
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["cdylib", "rlib"]
 
 [features]
 default = ["console_error_panic_hook"]

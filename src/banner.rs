@@ -82,7 +82,12 @@ fn script_src_list(srcs: &[&str]) -> String {
 /// Generates the inline `<script>` block for consent management.
 ///
 /// When `preset_choice` is `Some`, scripts are loaded immediately using that choice.
-/// When `None`, the script reads the `userConsent` cookie and shows or hides the banner.
+/// When `None`, the script reads the `userConsent` cookie. If the cookie contains
+/// 'accepted' or 'declined' (via strict equality), the banner is hidden, the revoke
+/// button is shown, and the consent choice is applied. Otherwise, the banner remains
+/// visible and no scripts are loaded until the user makes a choice.
+/// The `window.cookieConsent` function validates its input, accepting only 'accepted'
+/// or 'declined'; any other value is silently rejected.
 fn consent_script(
     essential_srcs: &str,
     tracking_srcs: &str,
@@ -91,7 +96,7 @@ fn consent_script(
     let init = match preset_choice {
         Some(choice) => format!(r#"  applyConsent("{choice}");"#, choice = choice),
         None => r#"  var existing = getCookie('userConsent');
-  if (existing) {
+  if (existing === 'accepted' || existing === 'declined') {
     document.getElementById('cookie-banner').style.display = 'none';
     document.getElementById('cookie-revoke-btn').style.display = 'block';
     applyConsent(existing);
@@ -142,6 +147,7 @@ fn consent_script(
   }}
 
   window.cookieConsent = function(choice) {{
+    if (choice !== 'accepted' && choice !== 'declined') return;
     setCookie('userConsent', choice);
     document.getElementById('cookie-banner').style.display = 'none';
     document.getElementById('cookie-revoke-btn').style.display = 'block';
@@ -315,5 +321,14 @@ mod tests {
     fn no_preset_reads_cookie_in_script() {
         let html = render_banner_html(&test_banner(), &test_buttons(), None, &test_scripts(), None);
         assert!(html.contains("getCookie('userConsent')"));
+    }
+
+    #[test]
+    fn cookie_consent_function_has_allowlist_guard() {
+        let html = render_banner_html(&test_banner(), &test_buttons(), None, &test_scripts(), None);
+        assert!(
+            html.contains("if (choice !== 'accepted' && choice !== 'declined') return;"),
+            "cookieConsent allowlist guard missing from generated script"
+        );
     }
 }

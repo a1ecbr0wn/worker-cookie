@@ -1,0 +1,536 @@
+---
+layout: docs
+title: "Themes | worker-cookie"
+nav_order: 4
+permalink: /themes
+---
+
+<style>
+/* ── Showcase layout ── */
+.showcase-section {
+  margin-bottom: 48px;
+}
+.showcase-section h2 {
+  margin-bottom: 8px;
+}
+.showcase-section > p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+.themes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: 32px;
+}
+.theme-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.theme-card-header {
+  padding: 16px 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+.theme-card-header h3 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+.theme-card-header p {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+.theme-card-config {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  background: #f5f5f5;
+  padding: 8px 20px;
+  border-bottom: 1px solid #eee;
+  color: #555;
+}
+.theme-preview {
+  padding: 48px 32px;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Positions grid ── */
+.positions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+.position-card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+.position-card-header {
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #eee;
+}
+.position-card-header h3 {
+  margin: 0 0 2px;
+  font-size: 14px;
+}
+.position-card-header code {
+  font-size: 11px;
+  color: #888;
+}
+.position-frame {
+  height: 220px;
+  background: #1a1a2e;
+  position: relative;
+  overflow: hidden;
+}
+.position-frame .fake-page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  opacity: 0.15;
+}
+.position-frame .fake-page div {
+  height: 10px;
+  background: #fff;
+  border-radius: 2px;
+}
+.position-frame .fake-page div:nth-child(2) { width: 80%; }
+.position-frame .fake-page div:nth-child(3) { width: 90%; }
+.position-frame .fake-page div:nth-child(4) { width: 70%; }
+.position-frame .fake-page div:nth-child(5) { width: 85%; }
+
+/* mini banner used in position frames */
+.mini-banner {
+  position: absolute;
+  background: rgba(10,14,39,0.97);
+  border: 1px solid #00ff00;
+  font-family: 'Courier New', monospace;
+  color: #00ff00;
+  font-size: 10px;
+  border-radius: 2px;
+  padding: 10px 12px;
+}
+.mini-banner .mini-msg { margin-bottom: 8px; line-height: 1.3; }
+.mini-banner .mini-btns { display: flex; gap: 6px; }
+.mini-banner .mini-btns button {
+  flex: 1;
+  padding: 4px 6px;
+  border: 1px solid #00ff00;
+  background: transparent;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  cursor: default;
+  border-radius: 1px;
+}
+.mini-banner .mini-btns button.primary {
+  background: #00ff00;
+  color: #0a0e27;
+}
+
+/* position-specific placement of mini banner */
+.pos-centre  { top: 50%; left: 50%; transform: translate(-50%,-50%); width: 160px; }
+.pos-bottom  { bottom: 0; left: 0; right: 0; border-radius: 0; border-left: none; border-right: none; border-bottom: none; }
+.pos-top     { top: 0; left: 0; right: 0; border-radius: 0; border-left: none; border-right: none; border-top: none; }
+.pos-box-br  { bottom: 10px; right: 10px; width: 140px; }
+.pos-box-bl  { bottom: 10px; left: 10px; width: 140px; }
+
+/* ── Real banner CSS (from assets/themes.css) ── */
+#cookie-banner {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+}
+.cookie-overlay { display: none; }
+.cookie-box { position: relative; z-index: 1; }
+.cookie-actions { display: flex; gap: 12px; }
+.cookie-btn { flex: 1; cursor: default; font-weight: 600; }
+.cookie-privacy-link { display: block; margin-bottom: 16px; font-size: 13px; }
+.cookie-title { }
+
+/* Hacker */
+.cookie-theme-hacker .cookie-box {
+  background: rgba(10,14,39,0.95);
+  border: 2px solid #00ff00;
+  border-radius: 2px;
+  padding: 24px;
+  max-width: 380px;
+  font-family: 'Courier New', monospace;
+  color: #00ff00;
+  box-shadow: 0 0 20px rgba(0,255,0,0.3), inset 0 0 20px rgba(0,255,0,0.05);
+}
+.cookie-theme-hacker .cookie-title {
+  font-size: 14px; font-weight: bold; margin-bottom: 12px;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+.cookie-theme-hacker .cookie-message {
+  font-size: 13px; line-height: 1.6; margin-bottom: 20px;
+}
+.cookie-theme-hacker .cookie-privacy-link { color: #00cc00; }
+.cookie-theme-hacker .cookie-btn {
+  padding: 10px 16px; border: 2px solid #00ff00;
+  background: transparent; color: #00ff00;
+  font-family: 'Courier New', monospace; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 1px; border-radius: 2px;
+}
+.cookie-theme-hacker .cookie-btn.primary { background: #00ff00; color: #0a0e27; }
+
+/* Minimal */
+.cookie-theme-minimal .cookie-box {
+  background: white; border-top: 3px solid #1a1a1a;
+  padding: 24px; max-width: 380px;
+  box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+}
+.cookie-theme-minimal .cookie-title {
+  font-size: 16px; font-weight: 700; margin-bottom: 12px;
+  color: #1a1a1a; font-family: Georgia, serif; letter-spacing: -0.3px;
+}
+.cookie-theme-minimal .cookie-message { font-size: 14px; line-height: 1.6; margin-bottom: 20px; color: #666; }
+.cookie-theme-minimal .cookie-privacy-link { color: #444; }
+.cookie-theme-minimal .cookie-btn {
+  padding: 12px 16px; border: none; background: #f0f0f0;
+  color: #1a1a1a; font-size: 13px; border-radius: 0;
+}
+.cookie-theme-minimal .cookie-btn.primary { background: #1a1a1a; color: white; }
+
+/* Dark Elegant */
+.cookie-theme-dark-elegant .cookie-box {
+  background: rgba(26,26,46,0.95); border-left: 4px solid #e94560;
+  padding: 28px; max-width: 380px; border-radius: 4px;
+}
+.cookie-theme-dark-elegant .cookie-title {
+  font-size: 18px; font-weight: 600; margin-bottom: 8px; color: #fff; letter-spacing: -0.5px;
+}
+.cookie-theme-dark-elegant .cookie-message { font-size: 14px; line-height: 1.7; margin-bottom: 24px; color: #b0b0b0; }
+.cookie-theme-dark-elegant .cookie-privacy-link { color: #e94560; }
+.cookie-theme-dark-elegant .cookie-btn {
+  padding: 12px 16px; border: 1px solid #404050;
+  background: transparent; color: #fff; font-size: 13px; border-radius: 4px;
+}
+.cookie-theme-dark-elegant .cookie-btn.primary {
+  background: #e94560; border-color: #e94560; color: white;
+}
+
+/* Sky */
+.cookie-theme-sky .cookie-box {
+  background: #e3f2fd; border: 2px solid #1976d2;
+  border-radius: 8px; padding: 28px; max-width: 380px;
+  box-shadow: 0 4px 12px rgba(25,118,210,0.15);
+}
+.cookie-theme-sky .cookie-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #0d47a1; }
+.cookie-theme-sky .cookie-message { font-size: 14px; line-height: 1.7; margin-bottom: 24px; color: #1565c0; }
+.cookie-theme-sky .cookie-privacy-link { color: #1976d2; }
+.cookie-theme-sky .cookie-btn {
+  padding: 12px 16px; border: 2px solid #1976d2;
+  background: white; color: #1976d2; font-size: 13px; border-radius: 6px;
+}
+.cookie-theme-sky .cookie-btn.primary { background: #1976d2; color: white; }
+
+/* Sage */
+.cookie-theme-sage .cookie-box {
+  background: #c8e6c9; border: 2px solid #388e3c;
+  border-radius: 8px; padding: 28px; max-width: 380px;
+  box-shadow: 0 4px 12px rgba(56,142,60,0.15);
+}
+.cookie-theme-sage .cookie-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #1b5e20; }
+.cookie-theme-sage .cookie-message { font-size: 14px; line-height: 1.7; margin-bottom: 24px; color: #2e7d32; }
+.cookie-theme-sage .cookie-privacy-link { color: #388e3c; }
+.cookie-theme-sage .cookie-btn {
+  padding: 12px 16px; border: 2px solid #388e3c;
+  background: white; color: #388e3c; font-size: 13px; border-radius: 6px;
+}
+.cookie-theme-sage .cookie-btn.primary { background: #388e3c; color: white; }
+
+/* Fire */
+.cookie-theme-fire .cookie-box {
+  background: #d32f2f; border: 2px solid #b71c1c;
+  border-radius: 8px; padding: 28px; max-width: 380px;
+  box-shadow: 0 4px 12px rgba(211,47,47,0.15);
+}
+.cookie-theme-fire .cookie-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff; }
+.cookie-theme-fire .cookie-message { font-size: 14px; line-height: 1.7; margin-bottom: 24px; color: #fff; }
+.cookie-theme-fire .cookie-privacy-link { color: #ffcccc; }
+.cookie-theme-fire .cookie-btn {
+  padding: 12px 16px; border: 2px solid #fff;
+  background: transparent; color: #fff; font-size: 13px; border-radius: 6px;
+}
+.cookie-theme-fire .cookie-btn.primary { background: #fff; color: #d32f2f; }
+
+/* Earth */
+.cookie-theme-earth .cookie-box {
+  background: #6d4c41; border: 2px solid #5d4037;
+  border-radius: 8px; padding: 28px; max-width: 380px;
+  box-shadow: 0 4px 12px rgba(93,64,55,0.15);
+}
+.cookie-theme-earth .cookie-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #ffd700; }
+.cookie-theme-earth .cookie-message { font-size: 14px; line-height: 1.7; margin-bottom: 24px; color: #ffd700; }
+.cookie-theme-earth .cookie-privacy-link { color: #ffed4e; }
+.cookie-theme-earth .cookie-btn {
+  padding: 12px 16px; border: 2px solid #ffd700;
+  background: transparent; color: #ffd700; font-size: 13px; border-radius: 6px;
+}
+.cookie-theme-earth .cookie-btn.primary { background: #ffd700; color: #3e2723; }
+
+/* Preview backgrounds */
+.bg-hacker {
+  background: #0a0e27;
+  background-image:
+    linear-gradient(0deg, transparent 24%, rgba(0,255,0,0.05) 25%, rgba(0,255,0,0.05) 26%, transparent 27%,
+      transparent 74%, rgba(0,255,0,0.05) 75%, rgba(0,255,0,0.05) 76%, transparent 77%),
+    linear-gradient(90deg, transparent 24%, rgba(0,255,0,0.05) 25%, rgba(0,255,0,0.05) 26%, transparent 27%,
+      transparent 74%, rgba(0,255,0,0.05) 75%, rgba(0,255,0,0.05) 76%, transparent 77%);
+  background-size: 50px 50px;
+}
+.bg-minimal        { background: #ffffff; }
+.bg-dark-elegant   { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); }
+.bg-sky            { background: #eaf4ff; }
+.bg-sage           { background: #eaf5ea; }
+.bg-fire           { background: #f5eaea; }
+.bg-earth          { background: #f5ede8; }
+</style>
+
+## Themes
+
+<div class="showcase-section">
+  <p>Each theme sets the visual style of the banner. Set <code>theme</code> in your <code>[banner.&lt;locale&gt;]</code> config.</p>
+
+  <div class="themes-grid">
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>hacker</h3>
+        <p>Monospace, neon green on dark — retro terminal aesthetic</p>
+      </div>
+      <div class="theme-card-config">theme = "hacker"</div>
+      <div class="theme-preview bg-hacker">
+        <div id="cookie-banner" class="cookie-banner cookie-theme-hacker">
+          <div class="cookie-box">
+            <div class="cookie-title">&gt; NOTICE</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>minimal</h3>
+        <p>Serif title, clean white background, dark top border</p>
+      </div>
+      <div class="theme-card-config">theme = "minimal"</div>
+      <div class="theme-preview bg-minimal">
+        <div class="cookie-banner cookie-theme-minimal">
+          <div class="cookie-box">
+            <div class="cookie-title">Cookie Notice</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>dark-elegant</h3>
+        <p>Deep navy with red accent bar — sophisticated dark UI</p>
+      </div>
+      <div class="theme-card-config">theme = "dark-elegant"</div>
+      <div class="theme-preview bg-dark-elegant">
+        <div class="cookie-banner cookie-theme-dark-elegant">
+          <div class="cookie-box">
+            <div class="cookie-title">Cookie Preferences</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>sky</h3>
+        <p>Light blue tones with strong blue border — friendly and open</p>
+      </div>
+      <div class="theme-card-config">theme = "sky"</div>
+      <div class="theme-preview bg-sky">
+        <div class="cookie-banner cookie-theme-sky">
+          <div class="cookie-box">
+            <div class="cookie-title">Cookie Notice</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>sage</h3>
+        <p>Soft green palette — calm and natural</p>
+      </div>
+      <div class="theme-card-config">theme = "sage"</div>
+      <div class="theme-preview bg-sage">
+        <div class="cookie-banner cookie-theme-sage">
+          <div class="cookie-box">
+            <div class="cookie-title">Cookie Notice</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>fire</h3>
+        <p>Bold red with white text — high contrast and attention-grabbing</p>
+      </div>
+      <div class="theme-card-config">theme = "fire"</div>
+      <div class="theme-preview bg-fire">
+        <div class="cookie-banner cookie-theme-fire">
+          <div class="cookie-box">
+            <div class="cookie-title">Cookie Notice</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="theme-card">
+      <div class="theme-card-header">
+        <h3>earth</h3>
+        <p>Warm brown with gold text — earthy and grounded</p>
+      </div>
+      <div class="theme-card-config">theme = "earth"</div>
+      <div class="theme-preview bg-earth">
+        <div class="cookie-banner cookie-theme-earth">
+          <div class="cookie-box">
+            <div class="cookie-title">Cookie Notice</div>
+            <div class="cookie-message">We use cookies to improve your experience. Essential cookies are always enabled.</div>
+            <div class="cookie-actions">
+              <button class="cookie-btn">Decline</button>
+              <button class="cookie-btn primary">Accept All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+## Positions
+
+<div class="showcase-section">
+  <p>The <code>style</code> field controls where the banner appears on screen. Set <code>style</code> in your <code>[banner.&lt;locale&gt;]</code> config.</p>
+
+  <div class="positions-grid">
+
+    <div class="position-card">
+      <div class="position-card-header">
+        <h3>Centre modal</h3>
+        <code>style = "centre"</code>
+      </div>
+      <div class="position-frame">
+        <div class="fake-page"><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="mini-banner pos-centre">
+          <div class="mini-msg">&gt; NOTICE<br>We use cookies.</div>
+          <div class="mini-btns"><button>Decline</button><button class="primary">Accept</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-card">
+      <div class="position-card-header">
+        <h3>Bottom bar</h3>
+        <code>style = "bottom"</code>
+      </div>
+      <div class="position-frame">
+        <div class="fake-page"><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="mini-banner pos-bottom">
+          <div class="mini-msg">&gt; We use cookies.</div>
+          <div class="mini-btns"><button>Decline</button><button class="primary">Accept</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-card">
+      <div class="position-card-header">
+        <h3>Top bar</h3>
+        <code>style = "top"</code>
+      </div>
+      <div class="position-frame">
+        <div class="fake-page"><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="mini-banner pos-top">
+          <div class="mini-msg">&gt; We use cookies.</div>
+          <div class="mini-btns"><button>Decline</button><button class="primary">Accept</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-card">
+      <div class="position-card-header">
+        <h3>Box — bottom right</h3>
+        <code>style = "box-bottom-right"</code>
+      </div>
+      <div class="position-frame">
+        <div class="fake-page"><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="mini-banner pos-box-br">
+          <div class="mini-msg">&gt; We use cookies.</div>
+          <div class="mini-btns"><button>Decline</button><button class="primary">Accept</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="position-card">
+      <div class="position-card-header">
+        <h3>Box — bottom left</h3>
+        <code>style = "box-bottom-left"</code>
+      </div>
+      <div class="position-frame">
+        <div class="fake-page"><div></div><div></div><div></div><div></div><div></div></div>
+        <div class="mini-banner pos-box-bl">
+          <div class="mini-msg">&gt; We use cookies.</div>
+          <div class="mini-btns"><button>Decline</button><button class="primary">Accept</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+## Overlay opacity
+
+The `overlay_opacity` field (0–100) sets how dark the background overlay appears. It only has a visible effect with `style = "centre"` — all other styles suppress the overlay. Set it to `0` for non-centre styles.
+
+## Revoke button
+
+After the visitor makes a choice, a 🍪 button appears fixed in the bottom-right corner. Clicking it re-opens the banner so they can change their mind.

@@ -82,9 +82,8 @@ jobs:
       - name: Build wasm and upload
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
           wrangler versions upload --name=cookie-worker
           export WORKER_VERSION=$(wrangler versions list --name=cookie-worker --json | jq -r '.[-1].id')
-          export MSG="cookie-worker uploaded as $WORKER_VERSION, to deploy this version run:\n \`wrangler versions deploy --name=cookie-worker --version-id=$WORKER_VERSION --yes\`"
-          echo $MSG
-          curl -H "Accept: application/json" -H "Content-Type:application/json" -X POST --data "{\"content\": \"$MSG\"}" https://discord.com/api/webhooks/1450559924898762824/gSkKN4fWZ1dQS84POSkW5-7fAvZaOiMNVwrCYcUJU3Yi4SM8Ns-fWbIt3wvLflbAEAiX
+          echo "cookie-worker uploaded as $WORKER_VERSION, to deploy this version run:\n \`wrangler versions deploy --name=cookie-worker --version-id=$WORKER_VERSION --yes\`"

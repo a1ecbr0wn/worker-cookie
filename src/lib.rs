@@ -11,9 +11,10 @@ mod utils;
 /// For non-HTML content-types, returns the upstream response unmodified. When the request
 /// already carries a `userConsent` cookie, injects only the script loader; otherwise injects
 /// the full banner UI.
-#[event(fetch)]
-async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
-    // Install panic hook for better error messages in the worker console.
+///
+/// Call this from your own `#[event(fetch)]` handler — see `worker-cookie-template` for a
+/// minimal entry point.
+pub async fn run(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     utils::set_panic_hook();
     let cfg = config::load(&env)?;
     let url = req.url()?;

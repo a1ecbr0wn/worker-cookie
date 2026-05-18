@@ -7,8 +7,9 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 ## Technology Stack
 
 - **Language**: Rust
-- **Platform**: Cloudflare Workers
+- **Platform**: Cloudflare Workers (WASM via `worker-build`)
 - **Deployment**: Cloudflare Workers runtime
+- **Distribution**: Published to crates.io as `worker-cookie`; users deploy via `worker-cookie-template`
 
 ## Core Functionality
 
@@ -122,6 +123,14 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 
 ## Configuration
 
+### Config File Location and Delivery
+
+- Config lives in `config/cookie-banner.toml` in the user's private template repo
+- Committed directly — no secrets required (nothing in the config is sensitive)
+- Injected at deploy time by CI via `wrangler versions upload --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"`
+- Local development: `wrangler dev --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"`
+- No `.dev.vars` file; no Cloudflare secrets needed for configuration
+
 ### Config File Format
 
 Configuration via TOML file with sections for theme, button labels, banner text, and script definitions.
@@ -193,6 +202,20 @@ tracking = [
 6. User clicks button, choice captured and stored in cookie
 7. Script loader executes, allowing essential scripts and (if accepted) non-essential scripts
 
+### Library vs Entry Point Split
+
+- `worker-cookie` is a pure library crate (`crate-type = ["cdylib", "rlib"]`) exposing `pub async fn run(req, env, ctx)`
+- The `#[event(fetch)]` macro entry point lives in `worker-cookie-template/src/lib.rs`
+- This separation allows the library to be published to crates.io and used as a dependency
+
+### Security Requirements
+
+- **XSS via cookie**: `userConsent` cookie value validated server-side to only `"accepted"` or `"declined"` before any HTML/JS interpolation
+- **Client-side guard**: JS cookie read uses strict equality (`=== 'accepted' || === 'declined'`), not a truthy check
+- **`window.cookieConsent` allowlist**: The public JS function rejects any choice value not in `{'accepted', 'declined'}` before writing the cookie
+- **CI injection safety**: GitHub Actions workflow inputs passed via `env:` block, never interpolated directly into `run:` shell steps
+- **No hardcoded secrets**: Discord webhook and similar credentials must come from repository secrets, not be committed
+
 ## Testing
 
 ### Unit Test Coverage
@@ -209,14 +232,16 @@ tracking = [
 
 ## Deliverables
 
-- [ ] Rust Worker source code
-- [ ] Configuration file template
-- [ ] CSS theme files (starting with hacker theme)
-- [ ] Banner HTML/JS injection logic
-- [ ] Script conditional loading logic with mutation observer
-- [ ] Consent revocation UI (reopen button/icon)
-- [ ] Unit tests (minimum coverage per testing section above)
-- [ ] Documentation for deployment and configuration
+- [x] Rust Worker source code (`worker-cookie` library crate)
+- [x] `worker-cookie-template` GitHub template repository (thin wrapper + CI)
+- [x] Configuration file (`config/cookie-banner.toml` in template repo)
+- [x] CSS theme files (7 themes: hacker, minimal, dark-elegant, sky, sage, fire, earth)
+- [x] Banner HTML/JS injection logic
+- [x] Script conditional loading logic with mutation observer
+- [x] Consent revocation UI (reopen button/icon)
+- [x] Unit tests (47 tests covering consent, injection, config, banner, locale)
+- [x] Jekyll documentation site (`docs/`) with setup, configuration, themes showcase
+- [ ] Publish `worker-cookie` to crates.io (prerequisite for template to work)
 
 ## Future Enhancements
 
