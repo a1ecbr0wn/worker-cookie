@@ -13,7 +13,7 @@ google_analytics: G-K1B7GJ3M5N
 favicon_ico: "/img/favicon-32.png"
 app512_ico: "/img/appicon-512.png"
 
-footer_content: '<a href="https://a1ecbr0wn.com"><img alt="a1ecbr0wn" src="https://img.shields.io/badge/a1ecbr0wn-home-brightgreen"></a> <img alt="Crates.io License" src="https://img.shields.io/crates/l/cookie-worker">'
+footer_content: '<a href="https://a1ecbr0wn.com"><img alt="a1ecbr0wn" src="https://img.shields.io/badge/a1ecbr0wn-home-brightgreen"></a> <img alt="License" src="https://img.shields.io/github/license/a1ecbr0wn/worker-cookie">'
 aux_links:
   '<i class="fa-brands fa-2x fa-github"></i>':
     - "https://github.com/a1ecbr0wn/worker-cookie"
