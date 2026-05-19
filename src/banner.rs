@@ -103,9 +103,9 @@ pub fn render_banner_html(
 /// `#d2ebff` as the cookie-body fill; that literal is replaced with `color` at render time
 /// (`replacen` with count 1, so only the intended occurrence is substituted).
 /// The SVG file can be opened directly in a browser for previewing.
-/// A bite cutout is omitted deliberately: at 24×24 the concave arc is only a few pixels deep
-/// and reads as a pointed notch rather than a round bite — a plain circle with chips is more
-/// immediately recognisable at this size.
+/// The bite cutout is produced by an SVG mask (white = cookie body, black = bite circle at 20,4 r=6).
+/// A mask is used rather than a compound path because the closed-outline path approach fills
+/// the bite region incorrectly (the cookie arc winds around it, giving it a non-zero winding number).
 /// The SVG is aria-hidden; the button carries its own accessible label.
 fn cookie_svg(color: &str) -> String {
     include_str!("../assets/cookie-icon.svg").replacen("#d2ebff", color, 1)
