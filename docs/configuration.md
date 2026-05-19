@@ -7,7 +7,25 @@ permalink: /configuration
 
 ## Configuration
 
-The worker reads its configuration from the `WORKER_CONFIG` environment variable, which must contain valid TOML. Configuration is keyed by locale (e.g. `en_GB`, `fr_FR`, `de_DE`), so you can serve different messages to visitors in different regions.
+The worker reads its configuration from the `WORKER_CONFIG` environment variable, which must contain valid TOML. You can serve different messages to visitors in different regions using locale-keyed sections (e.g. `[banner.en_GB]`, `[banner.fr_FR]`), and optionally define a locale-free default that applies when no locale matches.
+
+### Unqualified defaults
+
+`[banner]`, `[buttons]`, and `[privacy_policy]` can each be written without a locale suffix. These unqualified sections act as a catch-all for visitors whose locale does not match any specific entry. This lets you configure a single language without needing locale keys at all:
+
+```toml
+[banner]
+theme = "minimal"
+style = "bottom"
+overlay_opacity = 0
+message = "We use cookies to improve your experience."
+
+[buttons]
+accept_label = "Accept"
+decline_label = "Decline"
+```
+
+You can also mix unqualified defaults with locale-specific sections. The locale-specific entry takes priority when it matches; the unqualified section is the final fallback.
 
 ### Locale resolution
 
@@ -15,7 +33,7 @@ The worker reads the visitor's `Accept-Language` request header and resolves it 
 
 1. Exact match — `fr_FR` matches `[banner.fr_FR]`
 2. Language prefix — `en_US` matches `en_GB` (first key starting with `en`)
-3. Default — falls back to `en_GB` if no match is found
+3. Unqualified default — falls back to `[banner]` (no locale suffix) if no locale key matches; if there is no unqualified default either, the page is passed through unmodified
 
 ### `[banner.<locale>]`
 

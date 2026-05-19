@@ -483,3 +483,22 @@
   background: #ffed4e;
   color: #3e2723;
 }
+
+/* === Mobile === */
+@media (max-width: 480px) {
+  [class*="cookie-theme"] .cookie-message { font-size: 15px; }
+  [class*="cookie-theme"] .cookie-btn { font-size: 14px; }
+  .cookie-privacy-link { font-size: 14px; }
+
+  .cookie-style-box-bottom-right,
+  .cookie-style-box-bottom-left {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+  }
+
+  .cookie-style-box-bottom-right .cookie-box,
+  .cookie-style-box-bottom-left .cookie-box {
+    max-width: none;
+  }
+}

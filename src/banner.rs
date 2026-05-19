@@ -99,16 +99,19 @@ pub fn render_banner_html(
 
 /// Generates the inline SVG cookie icon used in the settings button.
 ///
-/// Renders a 24×24 cookie using `fill-rule="evenodd"` with a compound path: two overlapping
-/// arcs (radius 10 and radius 6) whose intersection creates the bite cutout via the fill rule.
-/// Chip dots are separate `<circle>` elements overlaid with translucent black. No `<clipPath>`
-/// is used, avoiding ID collisions when the SVG appears alongside other inline SVGs.
+/// Loads `assets/cookie-icon.svg` at compile time (via `include_str!`). The file uses
+/// `#d2ebff` as the cookie-body fill; that literal is replaced with `color` at render time
+/// (`replacen` with count 1, so only the intended occurrence is substituted).
+/// The SVG file can be opened directly in a browser for previewing.
+/// The bite cutout is produced by a `<clipPath>` containing a compound path drawn with arc
+/// commands and `clip-rule="evenodd"`. One subpath traces the cookie body circle; the other traces
+/// the bite circle. With evenodd, a point inside both circles has a ray-crossing count of 2 (even),
+/// placing it outside the clip region and producing the bite cutout. Using a clipPath rather than a
+/// mask avoids the mask's dependency on `fill` colours, which host-page CSS can override via
+/// inheritance.
 /// The SVG is aria-hidden; the button carries its own accessible label.
 fn cookie_svg(color: &str) -> String {
-    format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill-rule="evenodd" fill="{color}" d="M22 12A10 10 0 1 0 2 12A10 10 0 1 0 22 12ZM26 4A6 6 0 1 0 14 4A6 6 0 1 0 26 4Z"/><circle cx="9" cy="11" r="1.5" fill="rgba(0,0,0,0.22)"/><circle cx="14" cy="16" r="1.5" fill="rgba(0,0,0,0.22)"/><circle cx="8" cy="17" r="1.2" fill="rgba(0,0,0,0.22)"/><circle cx="15" cy="10" r="1.2" fill="rgba(0,0,0,0.22)"/></svg>"#,
-        color = color
-    )
+    include_str!("../assets/cookie-icon.svg").replacen("#d2ebff", color, 1)
 }
 
 /// Validates that `color` is safe to interpolate into an SVG `fill` attribute.
