@@ -99,18 +99,16 @@ pub fn render_banner_html(
 
 /// Generates the inline SVG cookie icon used in the settings button.
 ///
-/// Renders a 24×24 cookie as a closed outline path: the cookie body (circle r=10, centre 12,12)
-/// with a bite taken from the upper-right (bite circle r=6, centre 20,4). The two circles
-/// intersect at approximately (21.7, 9.7) and (14.3, 2.3); the path traces the short concave bite arc
-/// between those points, then the long cookie arc back around. No `fill-rule` tricks or
-/// `<clipPath>` IDs are needed, so there are no fill artifacts and no ID-collision risk.
-/// Chip dots are `<circle>` elements overlaid with translucent black. The SVG is aria-hidden;
-/// the button carries its own accessible label.
+/// Loads `assets/cookie-icon.svg` at compile time (via `include_str!`). The file uses
+/// `#d2ebff` as the cookie-body fill; that literal is replaced with `color` at render time
+/// (`replacen` with count 1, so only the intended occurrence is substituted).
+/// The SVG file can be opened directly in a browser for previewing.
+/// A bite cutout is omitted deliberately: at 24×24 the concave arc is only a few pixels deep
+/// and reads as a pointed notch rather than a round bite — a plain circle with chips is more
+/// immediately recognisable at this size.
+/// The SVG is aria-hidden; the button carries its own accessible label.
 fn cookie_svg(color: &str) -> String {
-    format!(
-        r#"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path fill="{color}" d="M21.7 9.7A6 6 0 0 1 14.3 2.3A10 10 0 1 0 21.7 9.7Z"/><circle cx="9" cy="11" r="1.5" fill="rgba(0,0,0,0.22)"/><circle cx="14" cy="16" r="1.5" fill="rgba(0,0,0,0.22)"/><circle cx="8" cy="17" r="1.2" fill="rgba(0,0,0,0.22)"/><circle cx="15" cy="10" r="1.2" fill="rgba(0,0,0,0.22)"/></svg>"#,
-        color = color
-    )
+    include_str!("../assets/cookie-icon.svg").replacen("#d2ebff", color, 1)
 }
 
 /// Validates that `color` is safe to interpolate into an SVG `fill` attribute.
