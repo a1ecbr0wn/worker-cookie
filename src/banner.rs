@@ -103,9 +103,12 @@ pub fn render_banner_html(
 /// `#d2ebff` as the cookie-body fill; that literal is replaced with `color` at render time
 /// (`replacen` with count 1, so only the intended occurrence is substituted).
 /// The SVG file can be opened directly in a browser for previewing.
-/// The bite cutout is produced by an SVG mask (white = cookie body, black = bite circle at 20,4 r=6).
-/// A mask is used rather than a compound path because the closed-outline path approach fills
-/// the bite region incorrectly (the cookie arc winds around it, giving it a non-zero winding number).
+/// The bite cutout is produced by a `<clipPath>` containing a compound path drawn with arc
+/// commands and `clip-rule="evenodd"`. One subpath traces the cookie body circle; the other traces
+/// the bite circle. With evenodd, a point inside both circles has a ray-crossing count of 2 (even),
+/// placing it outside the clip region and producing the bite cutout. Using a clipPath rather than a
+/// mask avoids the mask's dependency on `fill` colours, which host-page CSS can override via
+/// inheritance.
 /// The SVG is aria-hidden; the button carries its own accessible label.
 fn cookie_svg(color: &str) -> String {
     include_str!("../assets/cookie-icon.svg").replacen("#d2ebff", color, 1)
