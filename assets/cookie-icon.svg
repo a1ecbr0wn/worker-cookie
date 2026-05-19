@@ -11,7 +11,7 @@
         </clipPath>
     </defs>
     <g clip-path="url(#worker-cookie-clip)">
-        <circle cx="12" cy="12" r="10" fill="#d2ebff" />
+        <circle cx="12" cy="12" r="10" fill="#c8973f" />
         <circle cx="9" cy="9.5" r="1.5" fill="rgba(0,0,0,0.25)" />
         <circle cx="14" cy="10" r="1.2" fill="rgba(0,0,0,0.25)" />
         <circle cx="9" cy="15.5" r="1.2" fill="rgba(0,0,0,0.25)" />

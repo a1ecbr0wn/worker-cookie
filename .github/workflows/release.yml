@@ -88,10 +88,28 @@ jobs:
           export WORKER_VERSION=$(wrangler versions list --name=cookie-worker --json | jq -r '.[-1].id')
           echo "cookie-worker version $GITHUB_REF_NAME uploaded as ${WORKER_VERSION}, to deploy this version run:\n \`wrangler versions deploy --name=cookie-worker --version-id=${WORKER_VERSION} --yes\`"
 
+  publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    needs: [format, clippy]
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Rust Toolchain setup
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Publish to crates.io
+        run: cargo publish --token ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
   release:
     name: Tag Release Package
     runs-on: ubuntu-latest
-    needs: [format, clippy, upload]
+    needs: [format, clippy, upload, publish]
     permissions:
       contents: write
       pull-requests: read

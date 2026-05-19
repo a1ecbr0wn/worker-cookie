@@ -55,7 +55,7 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 - User can change consent choice at any time
 - Updated choice overwrites previous cookie value
 - Icon is an inline SVG (24×24) — no external request, no emoji dependency
-- Icon colour configurable via `[settings]` (see Configuration below); defaults to `#d2ebff`
+- Icon colour configurable via `[settings]` (see Configuration below); defaults to `#c8973f`
 - Icon position configurable via `[settings]` `bottom` and `right` pixel offsets
 
 ### 6. Multi-language Support
@@ -173,7 +173,7 @@ tracking = [
 - **Privacy Policy**: Optional URL and link text per locale
 - **Script Lists**: Define which scripts are essential vs. non-essential with URLs and metadata
 - **Settings button position**: Optional `bottom` and `right` pixel offsets via `[settings]`
-- **Settings button icon colour**: Optional CSS colour string via `[settings].color` (default `#d2ebff`)
+- **Settings button icon colour**: Optional CSS colour string via `[settings].color` (default `#c8973f`)
 
 ## Implementation Details
 

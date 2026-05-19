@@ -14,7 +14,7 @@ pub struct BannerConfig {
 /// Global position and appearance settings for the settings button, configured via `[settings]`.
 ///
 /// All fields are optional. Omitting `bottom` or `right` keeps the CSS defaults (16px).
-/// Omitting `color` defaults to `#d2ebff` (light blue matching the project icon).
+/// Omitting `color` defaults to `#c8973f` (cookie brown).
 #[derive(Debug, Clone, Deserialize, PartialEq, Default)]
 pub struct SettingsConfig {
     /// Pixels from the bottom of the viewport for the settings button.
@@ -23,7 +23,7 @@ pub struct SettingsConfig {
     /// Pixels from the right of the viewport for the settings button.
     #[serde(default)]
     pub right: Option<u16>,
-    /// CSS hex color for the settings button cookie icon fill (e.g. `#d2ebff`). Defaults to `#d2ebff`.
+    /// CSS hex color for the settings button cookie icon fill (e.g. `#c8973f`). Defaults to `#c8973f`.
     #[serde(default)]
     pub color: Option<String>,
 }
