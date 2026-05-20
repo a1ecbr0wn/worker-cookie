@@ -1,6 +1,6 @@
 [package]
 name = "cookie-worker"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 authors = ["Δ ǀ Ξ ȼ <alec@noser.net>"]
 description = "Cookie banner worker for Cloudflare Workers"
