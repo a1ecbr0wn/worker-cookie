@@ -23,153 +23,249 @@ and load scripts immediately.
 
 ## Setup
 
-`worker-cookie` is a library — you don’t deploy it directly. Instead, use
+`worker-cookie` is a library — you don't deploy it directly. Instead, use
 [worker-cookie-template](https://github.com/a1ecbr0wn/worker-cookie-template) to
-create your own private repository containing just your configuration. The
+create your own **private** repository containing just your configuration. The
 template wires up the entry point and CI for you; all the banner logic comes from
-the worker-cookie crate.
+the `worker-cookie` crate.
 
-See the [setup documentation](https://cookies.a1ecbr0wn.com/setup) for more infomation.
+### Prerequisites
 
-## Prerequisites for building this repository
+- A [Cloudflare account](https://dash.cloudflare.com/sign-up)
+- A Cloudflare API token with Workers edit permissions
 
-- [Rust](https://rustup.rs) with the `wasm32-unknown-unknown` target:
+### 1. Create your repository from the template
 
-```sh
-  rustup target add wasm32-unknown-unknown
+Click **Use this template** on the
+[worker-cookie-template GitHub page](https://github.com/a1ecbr0wn/worker-cookie-template)
+and choose **Create a new repository**. Make the repository **private** — your
+configuration will live here.
+
+Your new repository contains:
+
+| File                        | Purpose                                  |
+| --------------------------- | ---------------------------------------- |
+| `src/lib.rs`                | Entry point — calls into `worker-cookie` |
+| `Cargo.toml`                | Declares the `worker-cookie` dependency  |
+| `wrangler.jsonc`            | Worker name and build config             |
+| `config/cookie-banner.toml` | Your banner configuration                |
+| `.github/workflows/`        | CI to build and upload on every push     |
+
+### 2. Customise your worker name
+
+Open `wrangler.jsonc` and change the `name` field to something unique within
+your Cloudflare account:
+
+```jsonc
+{
+  "name": "my-site-cookie-worker",
+  ...
+}
 ```
 
-- [worker-build](https://github.com/cloudflare/workers-rs):
+### 3. Write your configuration
+
+Edit `config/cookie-banner.toml` to match your site's language, message, and scripts.
+See the [Configuration](#configuration) section below, or the
+[full configuration reference](https://cookies.a1ecbr0wn.com/configuration).
+
+At minimum you need a `[banner.<locale>]` section, a `[buttons.<locale>]` section,
+and a `[scripts]` section. Commit the file — CI reads it and passes it to the worker
+at deploy time. No secrets required for the configuration.
+
+### 4. Add your Cloudflare API token as a GitHub secret
+
+In your repository, go to **Settings → Secrets and variables → Actions** and add:
+
+| Secret name            | Value                                                          |
+| ---------------------- | -------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with _Workers Scripts: Edit_ permission |
+
+This is the only secret needed.
+
+### 5. Push and deploy
+
+Commit your changes and push. The CI workflow will:
+
+1. Run `cargo fmt` and `cargo clippy` checks
+2. Build the worker to WebAssembly
+3. Upload a new draft version to Cloudflare
+
+The upload creates a **draft** — it does not go live automatically. To promote it, run:
 
 ```sh
-  cargo install worker-build
+wrangler versions deploy --name=<your-worker-name> --yes
 ```
 
-- [Wrangler v4+](https://developers.cloudflare.com/workers/wrangler/):
+Or deploy from the Cloudflare dashboard under **Workers → your worker → Deployments**.
 
-```sh
-  npm install -D wrangler@latest
+### 6. Route traffic through your worker
+
+Your site's DNS must be managed by Cloudflare and the record must be proxied
+(orange cloud). Then in the Cloudflare dashboard:
+
+1. Select your account and site zone.
+2. Go to **Workers Routes** in the left sidebar.
+3. Click **Add route** and set the pattern to match your site (e.g. `example.com/*`).
+4. Set the **Worker** to the name from your `wrangler.jsonc`.
+
+Every HTML request matching the route will have the cookie banner injected automatically.
+
+## Configuration
+
+Configuration is a TOML string in `config/cookie-banner.toml`, passed to the worker
+via the `WORKER_CONFIG` environment variable by CI. All locale-keyed sections can be
+repeated for as many locales as needed.
+
+### Unqualified defaults
+
+`[banner]`, `[buttons]`, and `[privacy_policy]` can each be written without a locale
+suffix. These unqualified sections act as a catch-all for visitors whose locale does
+not match any specific entry. This lets you configure a single language without locale
+keys at all:
+
+```toml
+[banner]
+theme = "minimal"
+style = "bottom"
+overlay_opacity = 0
+message = "We use cookies to improve your experience."
+
+[buttons]
+accept_label = "Accept"
+decline_label = "Decline"
 ```
 
-## Local development
+You can also mix unqualified defaults with locale-specific sections. The locale-specific
+entry takes priority when it matches; the unqualified section is the final fallback.
 
-1. Copy `config/cookie-banner.toml` content into `.dev.vars`:
+### Locale resolution
 
-   ```sh
-   # .dev.vars
-   WORKER_CONFIG="""
+The worker reads the visitor's `Accept-Language` header and resolves it using a
+three-tier fallback:
 
-   [banner]
-   theme = "hacker"
-   style = "box-bottom-right"
-   overlay_opacity = 50
-   message = "We use cookies to improve your experience."
-
-   [buttons]
-   accept_label = "Accept All"
-   decline_label = "Decline Non-Essential"
-
-   [privacy_policy]
-   url = "https://example.com/privacy"
-   link_text = "Read our privacy policy"
-
-   [banner.fr_FR]
-   theme = "fire"
-   style = "box-bottom-left"
-   overlay_opacity = 0
-   message = "Nous utilisons des cookies pour améliorer votre expérience. Les cookies essentiels sont toujours activés."
-
-   [buttons.fr_FR]
-   accept_label = "Tout accepter"
-   decline_label = "Refuser les non-essentiels"
-
-   [privacy_policy.fr_FR]
-   url = "https://example.com/privacy"
-   link_text = "Lire notre politique de confidentialité"
-
-   [scripts]
-   essential = [{ name = "site-core", src = "/js/core.js" }]
-   tracking  = [
-     { name = "google-analytics", src = "https://www.googletagmanager.com/gtag/js" },
-   ]
-   """
-   ```
-
-2. Start the dev server:
-
-   ```sh
-   wrangler dev
-   ```
-
-   The worker listens on `http://localhost:8787` and proxies requests to the upstream
-   URL derived from the incoming request.
-
-## Configuration reference
-
-Configuration is a TOML string passed via the `WORKER_CONFIG` environment variable.
-All sections that accept locale codes (e.g. `en_GB`, `en_US`, `fr_FR`) can be repeated
-for as many locales as needed, default is no locale.
+1. Exact match — `fr_FR` matches `[banner.fr_FR]`
+2. Language prefix — `en_US` matches `en_GB` (first key starting with `en`)
+3. Unqualified default — falls back to `[banner]` if no locale key matches; if there
+   is no unqualified default either, the page is passed through unmodified
 
 ### `[banner.<locale>]`
 
-| Key               | Type   | Description                                                                     |
-| ----------------- | ------ | ------------------------------------------------------------------------------- |
-| `theme`           | string | Theme name: `hacker`, `minimal`, `dark-elegant`, `sky`, `sage`, `fire`, `earth` |
-| `style`           | string | Position: `centre`, `bottom`, `top`, `box-bottom-right`, `box-bottom-left`      |
-| `overlay_opacity` | u8     | Background overlay opacity 0–100 (ignored for box styles)                       |
-| `message`         | string | Banner body text                                                                |
+| Field             | Type            | Description                                                                                    |
+| ----------------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| `theme`           | string          | Visual theme. See [Themes](https://cookies.a1ecbr0wn.com/themes).                             |
+| `style`           | string          | Banner position. See [Themes](https://cookies.a1ecbr0wn.com/themes).                          |
+| `overlay_opacity` | integer (0–100) | Background overlay opacity in percent. Use `0` for position styles that don't show an overlay. |
+| `message`         | string          | The consent message shown to the visitor.                                                      |
 
 ### `[buttons.<locale>]`
 
-| Key             | Type   | Description         |
-| --------------- | ------ | ------------------- |
-| `accept_label`  | string | Accept button text  |
-| `decline_label` | string | Decline button text |
+| Field           | Type   | Description                   |
+| --------------- | ------ | ----------------------------- |
+| `accept_label`  | string | Label for the accept button.  |
+| `decline_label` | string | Label for the decline button. |
 
 ### `[privacy_policy.<locale>]` _(optional)_
 
-| Key         | Type   | Description        |
-| ----------- | ------ | ------------------ |
-| `url`       | string | Privacy policy URL |
-| `link_text` | string | Link display text  |
+When present, a link to your privacy policy is shown inside the banner.
+
+| Field       | Type   | Description                      |
+| ----------- | ------ | -------------------------------- |
+| `url`       | string | URL of your privacy policy page. |
+| `link_text` | string | Visible link text.               |
 
 ### `[scripts]`
 
-| Key         | Type              | Description                         |
-| ----------- | ----------------- | ----------------------------------- |
-| `essential` | `[{ name, src }]` | Always loaded regardless of consent |
-| `tracking`  | `[{ name, src }]` | Only loaded when user accepts       |
+| Field       | Type  | Description                                           |
+| ----------- | ----- | ----------------------------------------------------- |
+| `essential` | array | Scripts always loaded, regardless of consent.         |
+| `tracking`  | array | Scripts loaded only when the visitor accepts cookies. |
 
 ### `[settings]` _(optional)_
 
-| Key      | Type    | Default            | Description                                                                                                                                     |
+Global settings that apply across all locales. Controls the position and appearance
+of the settings button (the cookie icon that lets visitors reopen the banner).
+
+| Field    | Type    | Default            | Description                                                                                                                                     |
 | -------- | ------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button.                                                                                 |
 | `right`  | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button.                                                                                  |
 | `color`  | string  | `#c8973f`          | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
 
-## Deployment
+### Full example
 
-1. Set `WORKER_CONFIG` as a Wrangler secret (paste the TOML content when prompted):
+```toml
+[banner.en_GB]
+theme = "hacker"
+style = "box-bottom-right"
+overlay_opacity = 0
+message = "We use cookies to improve your experience. Essential cookies are always enabled."
 
-   ```sh
-   wrangler secret put WORKER_CONFIG
-   ```
+[buttons.en_GB]
+accept_label = "Accept All"
+decline_label = "Decline Non-Essential"
 
-2. Build and deploy:
+[privacy_policy.en_GB]
+url = "https://example.com/privacy"
+link_text = "Read our privacy policy"
 
-   ```sh
-   worker-build --release
-   wrangler deploy
-   ```
+[banner.fr_FR]
+theme = "hacker"
+style = "box-bottom-right"
+overlay_opacity = 0
+message = "Nous utilisons des cookies pour améliorer votre expérience."
 
-3. To roll back to the previous version:
+[buttons.fr_FR]
+accept_label = "Tout accepter"
+decline_label = "Refuser les non essentiels"
 
-   ```sh
-   wrangler rollback
-   ```
+[privacy_policy.fr_FR]
+url = "https://example.com/privacy"
+link_text = "Lire notre politique de confidentialité"
 
-## Running tests
+[scripts]
+essential = [
+  { name = "site-core", src = "/js/core.js" }
+]
+tracking = [
+  { name = "google-analytics", src = "https://www.googletagmanager.com/gtag/js" }
+]
+
+[settings]
+bottom = 24
+right = 32
+color = "#c8973f"
+```
+
+## Contributing
+
+### Prerequisites
+
+- [Rust](https://rustup.rs) with the `wasm32-unknown-unknown` target:
+
+```sh
+rustup target add wasm32-unknown-unknown
+```
+
+- [worker-build](https://github.com/cloudflare/workers-rs):
+
+```sh
+cargo install worker-build
+```
+
+- [Wrangler v4+](https://developers.cloudflare.com/workers/wrangler/):
+
+```sh
+npm install -D wrangler@latest
+```
+
+### Local development
+
+```sh
+wrangler dev --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"
+```
+
+### Running tests
 
 Tests run natively (no Wasm runtime needed) since all business logic is pure Rust:
 
