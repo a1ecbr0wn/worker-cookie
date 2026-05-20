@@ -8,8 +8,6 @@ plugins:
   - jekyll-include-cache
   - jekyll-default-layout
 
-google_analytics: G-K1B7GJ3M5N
-
 favicon_ico: "/img/favicon-32.png"
 app512_ico: "/img/appicon-512.png"
 
