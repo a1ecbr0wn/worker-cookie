@@ -2,14 +2,16 @@
 
 ## Project Overview
 
-A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pages to manage user consent for non-essential cookies and third-party scripts.
+A Rust-based Cloudflare Worker that injects a cookie consent banner onto web
+pages to manage user consent for non-essential cookies and third-party scripts.
 
 ## Technology Stack
 
 - **Language**: Rust
 - **Platform**: Cloudflare Workers (WASM via `worker-build`)
 - **Deployment**: Cloudflare Workers runtime
-- **Distribution**: Published to crates.io as `worker-cookie`; users deploy via `worker-cookie-template`
+- **Distribution**: Published to crates.io as `cookie-worker`; users deploy via
+  `worker-cookie-template`
 
 ## Core Functionality
 
@@ -55,12 +57,14 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 - User can change consent choice at any time
 - Updated choice overwrites previous cookie value
 - Icon is an inline SVG (24×24) — no external request, no emoji dependency
-- Icon colour configurable via `[settings]` (see Configuration below); defaults to `#c8973f`
+- Icon colour configurable via `[settings]` (see Configuration below); defaults
+  to `#c8973f`
 - Icon position configurable via `[settings]` `bottom` and `right` pixel offsets
 
 ### 6. Multi-language Support
 
-- Configuration file supports multiple language sections with locale codes (e.g., `[banner.en_GB]`, `[banner.fr_FR]`, `[banner.de_DE]`)
+- Configuration file supports multiple language sections with locale codes (e.g.,
+  `[banner.en_GB]`, `[banner.fr_FR]`, `[banner.de_DE]`)
 - Worker detects user language/locale and applies appropriate section
 - Banner text, button labels, and messages customizable per locale
 
@@ -76,6 +80,7 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 ### Available Themes
 
 #### Hacker
+
 - **Background**: Dark navy (`#0a0e27`) with green scanline grid overlay
 - **Text**: Neon green (`#00ff00`), monospace (`Courier New`)
 - **Border**: 2px solid neon green with green glow box-shadow
@@ -83,40 +88,47 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 - **Title prefix**: `> NOTICE`
 
 #### Minimal
+
 - **Background**: White
 - **Text**: Dark (`#1a1a1a`) title in Georgia serif; body in system sans-serif (`#666`)
 - **Border**: 3px solid dark top accent, no radius
 - **Buttons**: Light grey background; primary button black with white text
 
 #### Dark Elegant
+
 - **Background**: Dark navy gradient (`#1a1a2e` → `#16213e`) with backdrop blur
 - **Text**: White title, grey body (`#b0b0b0`); left accent bar in red (`#e94560`)
 - **Border**: 4px left border accent, 4px radius
 - **Buttons**: Outlined white/grey; primary button red (`#e94560`)
 
 #### Sky
+
 - **Background**: Light blue (`#e3f2fd`) with blue border
 - **Text**: Deep blue (`#0d47a1`) title, medium blue body (`#1565c0`)
 - **Border**: 2px solid `#1976d2`, 8px radius, soft blue shadow
 - **Buttons**: White with blue border; primary button solid blue
 
 #### Sage
+
 - **Background**: Light green (`#c8e6c9`) with green border
 - **Text**: Dark green (`#1b5e20`) title, medium green body (`#2e7d32`)
 - **Border**: 2px solid `#388e3c`, 8px radius, soft green shadow
 - **Buttons**: White with green border; primary button solid green
 
 #### Fire
+
 - **Background**: Red (`#d32f2f`) with dark red border
 - **Text**: White title and body
 - **Border**: 2px solid `#b71c1c`, 8px radius, soft red shadow
 - **Buttons**: Transparent with white border; primary button white with red text
 
 #### Earth
+
 - **Background**: Brown (`#6d4c41`) with darker brown border
 - **Text**: Gold (`#ffd700`) title and body
 - **Border**: 2px solid `#5d4037`, 8px radius, soft brown shadow
-- **Buttons**: Transparent with gold border; primary button solid gold with dark brown text
+- **Buttons**: Transparent with gold border; primary button solid gold with dark
+  brown text
 
 ### Configuration for Themes
 
@@ -130,15 +142,18 @@ A Rust-based Cloudflare Worker that injects a cookie consent banner onto web pag
 
 - Config lives in `config/cookie-banner.toml` in the user's private template repo
 - Committed directly — no secrets required (nothing in the config is sensitive)
-- Injected at deploy time by CI via `wrangler versions upload --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"`
+- Injected at deploy time by CI via `wrangler versions upload` with the
+  `WORKER_CONFIG` variable set to the contents of `config/cookie-banner.toml`
 - Local development: `wrangler dev --var "WORKER_CONFIG:$(cat config/cookie-banner.toml)"`
 - No `.dev.vars` file; no Cloudflare secrets needed for configuration
 
 ### Config File Format
 
-Configuration via TOML file with sections for theme, button labels, banner text, and script definitions.
+Configuration via TOML file with sections for theme, button labels, banner text,
+and script definitions.
 
 Example structure:
+
 ```toml
 [banner.en_GB]
 theme = "hacker"
@@ -171,9 +186,12 @@ tracking = [
 - **Banner Text**: Customizable message displayed on banner per locale
 - **Banner Style**: Choose positioning style and overlay opacity
 - **Privacy Policy**: Optional URL and link text per locale
-- **Script Lists**: Define which scripts are essential vs. non-essential with URLs and metadata
-- **Settings button position**: Optional `bottom` and `right` pixel offsets via `[settings]`
-- **Settings button icon colour**: Optional CSS colour string via `[settings].color` (default `#c8973f`)
+- **Script Lists**: Define which scripts are essential vs. non-essential with URLs
+  and metadata
+- **Settings button position**: Optional `bottom` and `right` pixel offsets via
+  `[settings]`
+- **Settings button icon colour**: Optional CSS colour string via `[settings].color`
+  (default `#c8973f`)
 
 ## Implementation Details
 
@@ -192,7 +210,8 @@ tracking = [
 
 ### Script Injection Strategy
 
-- Worker rewrites HTML response, injects banner HTML + loader script before `</body>` tag
+- Worker rewrites HTML response, injects banner HTML + loader script before `</body>`
+  tag
 - Loader script includes mutation observer to catch dynamically-injected scripts
 - Third-party scripts filtered based on `userConsent` cookie value
 - Non-essential scripts blocked until consent obtained
@@ -205,21 +224,29 @@ tracking = [
 4. If no cookie exists, inject banner + script loader
 5. Banner displays with accept/decline buttons
 6. User clicks button, choice captured and stored in cookie
-7. Script loader executes, allowing essential scripts and (if accepted) non-essential scripts
+7. Script loader executes, allowing essential scripts and (if accepted) non-essential
+   scripts
 
 ### Library vs Entry Point Split
 
-- `worker-cookie` is a pure library crate (`crate-type = ["cdylib", "rlib"]`) exposing `pub async fn run(req, env, ctx)`
+- `cookie-worker` is a pure library crate (`crate-type = ["cdylib", "rlib"]`) exposing
+  `pub async fn run(req, env, ctx)`
 - The `#[event(fetch)]` macro entry point lives in `worker-cookie-template/src/lib.rs`
-- This separation allows the library to be published to crates.io and used as a dependency
+- This separation allows the library to be published to crates.io and used as a
+  dependency
 
 ### Security Requirements
 
-- **XSS via cookie**: `userConsent` cookie value validated server-side to only `"accepted"` or `"declined"` before any HTML/JS interpolation
-- **Client-side guard**: JS cookie read uses strict equality (`=== 'accepted' || === 'declined'`), not a truthy check
-- **`window.cookieConsent` allowlist**: The public JS function rejects any choice value not in `{'accepted', 'declined'}` before writing the cookie
-- **CI injection safety**: GitHub Actions workflow inputs passed via `env:` block, never interpolated directly into `run:` shell steps
-- **No hardcoded secrets**: Discord webhook and similar credentials must come from repository secrets, not be committed
+- **XSS via cookie**: `userConsent` cookie value validated server-side to only
+  `"accepted"` or `"declined"` before any HTML/JS interpolation
+- **Client-side guard**: JS cookie read uses strict equality (
+  `=== 'accepted' || === 'declined'`), not a truthy check
+- **`window.cookieConsent` allowlist**: The public JS function rejects any choice
+  value not in `{'accepted', 'declined'}` before writing the cookie
+- **CI injection safety**: GitHub Actions workflow inputs passed via `env:` block,
+  never interpolated directly into `run:` shell steps
+- **No hardcoded secrets**: Discord webhook and similar credentials must come from
+  repository secrets, not be committed
 
 ## Testing
 
@@ -237,16 +264,17 @@ tracking = [
 
 ## Deliverables
 
-- [x] Rust Worker source code (`worker-cookie` library crate)
+- [x] Rust Worker source code (`cookie-worker` library crate)
 - [x] `worker-cookie-template` GitHub template repository (thin wrapper + CI)
 - [x] Configuration file (`config/cookie-banner.toml` in template repo)
-- [x] CSS theme files (7 themes: hacker, minimal, dark-elegant, sky, sage, fire, earth)
+- [x] CSS theme files (7 themes: hacker, minimal, dark-elegant, sky, sage, fire,
+      earth)
 - [x] Banner HTML/JS injection logic
 - [x] Script conditional loading logic with mutation observer
 - [x] Consent revocation UI (reopen button/icon)
 - [x] Unit tests (47 tests covering consent, injection, config, banner, locale)
 - [x] Jekyll documentation site (`docs/`) with setup, configuration, themes showcase
-- [ ] Publish `worker-cookie` to crates.io (prerequisite for template to work)
+- [x] Publish `cookie-worker` to crates.io (prerequisite for template to work)
 
 ## Future Enhancements
 

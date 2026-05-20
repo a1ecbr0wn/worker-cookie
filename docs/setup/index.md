@@ -1,17 +1,18 @@
 ---
 layout: docs
-title: "Setup | worker-cookie"
+title: "Setup | cookie-worker"
 nav_order: 2
 permalink: /setup
 ---
 
 ## Setup
 
-`worker-cookie` is a library — you don't deploy it directly. Instead, use
-[worker-cookie-template](https://github.com/a1ecbr0wn/worker-cookie-template)
+This Cloudflare Worker `cookie-worker` is a rust crate — you don't deploy it
+directly. Instead, use
+[this template](https://github.com/a1ecbr0wn/worker-cookie-template)
 to create your own **private** repository containing just your configuration.
 The template wires up the entry point and CI for you; all the banner logic
-comes from the `worker-cookie` crate.
+comes from the `cookie-worker` crate.
 
 ### Prerequisites
 
@@ -21,7 +22,7 @@ comes from the `worker-cookie` crate.
 ### 1. Create your repository from the template
 
 Click **Use this template** on the
-[worker-cookie-template GitHub page](https://github.com/a1ecbr0wn/worker-cookie-template)
+[template GitHub page](https://github.com/a1ecbr0wn/worker-cookie-template)
 and choose **Create a new repository**. Make the repository **private** — your
 configuration will live here.
 
@@ -29,8 +30,8 @@ Your new repository contains:
 
 | File                        | Purpose                                  |
 | --------------------------- | ---------------------------------------- |
-| `src/lib.rs`                | Entry point — calls into `worker-cookie` |
-| `Cargo.toml`                | Declares the `worker-cookie` dependency  |
+| `src/lib.rs`                | Entry point — calls into `cookie-worker` |
+| `Cargo.toml`                | Declares the `cookie-worker` dependency  |
 | `wrangler.jsonc`            | Worker name and build config             |
 | `config/cookie-banner.toml` | Your banner configuration                |
 | `.github/workflows/`        | CI to build and upload on every push     |
@@ -62,7 +63,7 @@ In your repository, go to **Settings → Secrets and variables → Actions** and
 
 | Secret name            | Value                                                          |
 | ---------------------- | -------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with _Workers Scripts: Edit_ permission |
+| `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with *Workers Scripts: Edit* permission |
 
 This is the only secret needed.
 
@@ -85,9 +86,9 @@ Or deploy from the Cloudflare dashboard under **Workers → your worker → Depl
 
 ### 6. Route traffic through your worker
 
-**Prerequisite**: your site's DNS must be managed by Cloudflare and the record must
-be proxied (orange cloud icon in the Cloudflare DNS dashboard). If your site is not
-behind Cloudflare's proxy, workers cannot intercept its traffic.
+**Prerequisite**: your site's DNS must be managed by Cloudflare and the record
+must be proxied (orange cloud icon in the Cloudflare DNS dashboard). If your
+site is not behind Cloudflare's proxy, workers cannot intercept its traffic.
 
 The worker acts as a transparent proxy: it receives the request, fetches the page
 from your origin server, injects the cookie banner into HTML responses, and returns
@@ -101,9 +102,11 @@ To wire this up:
 2. Go to **Workers Routes** (under the **Workers** section in the left sidebar).
 3. Click **Add route**.
 4. Set the **Route** pattern to match all pages on your site, e.g.:
-   ```
+
+   ```text
    example.com/*
    ```
+
 5. Set the **Worker** to the name you gave your worker in `wrangler.jsonc`.
 6. Save.
 

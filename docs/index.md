@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "worker-cookie | Cookie Consent Banner for Cloudflare Workers"
+title: "cookie-worker | Cookie Consent Banner for Cloudflare Workers"
 nav_order: 1
 permalink: /
 ---
@@ -10,9 +10,12 @@ permalink: /
   "MD041": false
 } -->
 
-`worker-cookie` is a Rust library that adds a cookie consent banner to any
-Cloudflare Worker site — without touching your site's code. Use
-[worker-cookie-template](https://github.com/a1ecbr0wn/worker-cookie-template)
+## Cookie-worker
+
+The `cookie-worker` is a [Rust library](https://crates.io/crates/cookie-worker)
+that adds a cookie consent banner to any Cloudflare Worker site — without touching
+your site's code. Use
+[this template](https://github.com/a1ecbr0wn/worker-cookie-template)
 to create your own repository containing just your configuration, and let GitHub
 Actions handle the deploy.
 
@@ -24,7 +27,7 @@ HTML, CSS, and JavaScript before returning them to the browser. Non-HTML respons
 ## How it works
 
 1. A visitor requests a page from your site.
-2. The `worker-cookie` worker intercepts the request and fetches it from your
+2. The `cookie-worker` worker intercepts the request and fetches it from your
    upstream site.
 3. If the response is HTML, the banner is injected before `</body>` and the theme
    CSS is injected into `<head>`.

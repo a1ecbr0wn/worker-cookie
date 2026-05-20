@@ -23,11 +23,12 @@ and load scripts immediately.
 
 ## Setup
 
-`worker-cookie` is a library — you don't deploy it directly. Instead, use
-[worker-cookie-template](https://github.com/a1ecbr0wn/worker-cookie-template) to
+This Cloudflare Worker `cookie-worker` is a Rust crate — you don't deploy it
+directly. Instead, use
+[this template](https://github.com/a1ecbr0wn/worker-cookie-template) to
 create your own **private** repository containing just your configuration. The
 template wires up the entry point and CI for you; all the banner logic comes from
-the `worker-cookie` crate.
+the `cookie-worker` crate.
 
 ### Prerequisites
 
@@ -37,7 +38,7 @@ the `worker-cookie` crate.
 ### 1. Create your repository from the template
 
 Click **Use this template** on the
-[worker-cookie-template GitHub page](https://github.com/a1ecbr0wn/worker-cookie-template)
+[template GitHub page](https://github.com/a1ecbr0wn/worker-cookie-template)
 and choose **Create a new repository**. Make the repository **private** — your
 configuration will live here.
 
@@ -45,8 +46,8 @@ Your new repository contains:
 
 | File                        | Purpose                                  |
 | --------------------------- | ---------------------------------------- |
-| `src/lib.rs`                | Entry point — calls into `worker-cookie` |
-| `Cargo.toml`                | Declares the `worker-cookie` dependency  |
+| `src/lib.rs`                | Entry point — calls into `cookie-worker` |
+| `Cargo.toml`                | Declares the `cookie-worker` dependency  |
 | `wrangler.jsonc`            | Worker name and build config             |
 | `config/cookie-banner.toml` | Your banner configuration                |
 | `.github/workflows/`        | CI to build and upload on every push     |
@@ -79,7 +80,7 @@ In your repository, go to **Settings → Secrets and variables → Actions** and
 
 | Secret name            | Value                                                          |
 | ---------------------- | -------------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with _Workers Scripts: Edit_ permission |
+| `CLOUDFLARE_API_TOKEN` | A Cloudflare API token with *Workers Scripts: Edit* permission |
 
 This is the only secret needed.
 
@@ -91,7 +92,8 @@ Commit your changes and push. The CI workflow will:
 2. Build the worker to WebAssembly
 3. Upload a new draft version to Cloudflare
 
-The upload creates a **draft** — it does not go live automatically. To promote it, run:
+The upload creates a **draft** — it does not go live automatically. To
+promote it, run:
 
 ```sh
 wrangler versions deploy --name=<your-worker-name> --yes
@@ -113,16 +115,16 @@ Every HTML request matching the route will have the cookie banner injected autom
 
 ## Configuration
 
-Configuration is a TOML string in `config/cookie-banner.toml`, passed to the worker
-via the `WORKER_CONFIG` environment variable by CI. All locale-keyed sections can be
-repeated for as many locales as needed.
+Configuration is a TOML string in `config/cookie-banner.toml`, passed to the
+worker via the `WORKER_CONFIG` environment variable by CI. All locale-keyed
+sections can be repeated for as many locales as needed.
 
 ### Unqualified defaults
 
-`[banner]`, `[buttons]`, and `[privacy_policy]` can each be written without a locale
-suffix. These unqualified sections act as a catch-all for visitors whose locale does
-not match any specific entry. This lets you configure a single language without locale
-keys at all:
+`[banner]`, `[buttons]`, and `[privacy_policy]` can each be written without a
+locale suffix. These unqualified sections act as a catch-all for visitors whose
+locale does not match any specific entry. This lets you configure a single
+language without locale keys at all:
 
 ```toml
 [banner]
@@ -151,12 +153,12 @@ three-tier fallback:
 
 ### `[banner.<locale>]`
 
-| Field             | Type            | Description                                                                                    |
-| ----------------- | --------------- | ---------------------------------------------------------------------------------------------- |
-| `theme`           | string          | Visual theme. See [Themes](https://cookies.a1ecbr0wn.com/themes).                             |
-| `style`           | string          | Banner position. See [Themes](https://cookies.a1ecbr0wn.com/themes).                          |
+| Field | Type | Description |
+| --- | --- | --- |
+| `theme` | string | Visual theme. See [Themes](https://cookies.a1ecbr0wn.com/themes). |
+| `style` | string | Banner position. See [Themes](https://cookies.a1ecbr0wn.com/themes). |
 | `overlay_opacity` | integer (0–100) | Background overlay opacity in percent. Use `0` for position styles that don't show an overlay. |
-| `message`         | string          | The consent message shown to the visitor.                                                      |
+| `message` | string | The consent message shown to the visitor. |
 
 ### `[buttons.<locale>]`
 
@@ -165,7 +167,7 @@ three-tier fallback:
 | `accept_label`  | string | Label for the accept button.  |
 | `decline_label` | string | Label for the decline button. |
 
-### `[privacy_policy.<locale>]` _(optional)_
+### `[privacy_policy.<locale>]` *(optional)*
 
 When present, a link to your privacy policy is shown inside the banner.
 
@@ -181,16 +183,16 @@ When present, a link to your privacy policy is shown inside the banner.
 | `essential` | array | Scripts always loaded, regardless of consent.         |
 | `tracking`  | array | Scripts loaded only when the visitor accepts cookies. |
 
-### `[settings]` _(optional)_
+### `[settings]` *(optional)*
 
 Global settings that apply across all locales. Controls the position and appearance
 of the settings button (the cookie icon that lets visitors reopen the banner).
 
-| Field    | Type    | Default            | Description                                                                                                                                     |
-| -------- | ------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button.                                                                                 |
-| `right`  | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button.                                                                                  |
-| `color`  | string  | `#c8973f`          | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button. |
+| `right` | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button. |
+| `color` | string | `#c8973f` | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
 
 ### Full example
 
@@ -253,7 +255,7 @@ color = "#c8973f"
 
 ## Contributing
 
-### Prerequisites
+### Build prerequisites
 
 - [Rust](https://rustup.rs) with the `wasm32-unknown-unknown` target:
 

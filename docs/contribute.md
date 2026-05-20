@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "Contribute | worker-cookie"
+title: "Contribute | cookie-worker"
 permalink: /contribute
 ---
 

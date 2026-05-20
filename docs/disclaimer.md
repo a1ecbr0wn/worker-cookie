@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "Disclaimer | worker-cookie"
+title: "Disclaimer | cookie-worker"
 permalink: /disclaimer
 ---
 

@@ -1,6 +1,6 @@
 ---
 layout: docs
-title: "Configuration | worker-cookie"
+title: "Configuration | cookie-worker"
 nav_order: 3
 permalink: /configuration
 ---
@@ -48,12 +48,12 @@ to a configuration locale using a three-tier fallback:
 
 ### `[banner.<locale>]`
 
-| Field             | Type            | Description                                                                                    |
-| ----------------- | --------------- | ---------------------------------------------------------------------------------------------- |
-| `theme`           | string          | Visual theme. See [Themes](../themes).                                                         |
-| `style`           | string          | Banner position. See [Themes](../themes).                                                      |
+| Field | Type | Description |
+| --- | --- | --- |
+| `theme` | string | Visual theme. See [Themes](../themes). |
+| `style` | string | Banner position. See [Themes](../themes). |
 | `overlay_opacity` | integer (0–100) | Background overlay opacity in percent. Use `0` for position styles that don't show an overlay. |
-| `message`         | string          | The consent message shown to the visitor.                                                      |
+| `message` | string | The consent message shown to the visitor. |
 
 ### `[buttons.<locale>]`
 
@@ -62,7 +62,7 @@ to a configuration locale using a three-tier fallback:
 | `accept_label`  | string | Label for the accept button.  |
 | `decline_label` | string | Label for the decline button. |
 
-### `[privacy_policy.<locale>]` _(optional)_
+### `[privacy_policy.<locale>]` *(optional)*
 
 When present, a link to your privacy policy is shown inside the banner.
 
@@ -81,16 +81,16 @@ reference only) and a `src` (the script URL).
 | `essential` | array | Scripts always loaded, regardless of consent.         |
 | `tracking`  | array | Scripts loaded only when the visitor accepts cookies. |
 
-### `[settings]` _(optional)_
+### `[settings]` *(optional)*
 
 Global settings that apply across all locales. Controls the position and appearance
 of the settings button (the cookie icon that lets visitors reopen the banner).
 
-| Field    | Type    | Default            | Description                                                                                                                                     |
-| -------- | ------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button.                                                                                 |
-| `right`  | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button.                                                                                  |
-| `color`  | string  | `#c8973f`          | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button. |
+| `right` | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button. |
+| `color` | string | `#c8973f` | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
 
 ```toml
 [settings]
