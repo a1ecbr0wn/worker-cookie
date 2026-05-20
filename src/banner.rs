@@ -43,7 +43,7 @@ pub fn render_banner_html(
             .collect::<Vec<_>>(),
     );
 
-    let raw_color = settings.color.as_deref().unwrap_or("#d2ebff");
+    let raw_color = settings.color.as_deref().unwrap_or("#c8973f");
     let icon = cookie_svg(sanitize_svg_color(raw_color));
 
     let mut pos = String::new();
@@ -100,7 +100,7 @@ pub fn render_banner_html(
 /// Generates the inline SVG cookie icon used in the settings button.
 ///
 /// Loads `assets/cookie-icon.svg` at compile time (via `include_str!`). The file uses
-/// `#d2ebff` as the cookie-body fill; that literal is replaced with `color` at render time
+/// `#c8973f` as the cookie-body fill; that literal is replaced with `color` at render time
 /// (`replacen` with count 1, so only the intended occurrence is substituted).
 /// The SVG file can be opened directly in a browser for previewing.
 /// The bite cutout is produced by a `<clipPath>` containing a compound path drawn with arc
@@ -111,7 +111,7 @@ pub fn render_banner_html(
 /// inheritance.
 /// The SVG is aria-hidden; the button carries its own accessible label.
 fn cookie_svg(color: &str) -> String {
-    include_str!("../assets/cookie-icon.svg").replacen("#d2ebff", color, 1)
+    include_str!("../assets/cookie-icon.svg").replacen("#c8973f", color, 1)
 }
 
 /// Validates that `color` is safe to interpolate into an SVG `fill` attribute.
@@ -119,11 +119,11 @@ fn cookie_svg(color: &str) -> String {
 /// Uses a strict allowlist: accepts only CSS hex colours (`#rgb`, `#rrggbb`, `#rgba`,
 /// `#rrggbbaa`) and the keywords `none` and `transparent`. Any other value — including
 /// named colours, `rgb(...)` functions, and `url(...)` references — falls back to
-/// `"#d2ebff"`. Allowlist is intentionally narrow to eliminate the entire class of
+/// `"#c8973f"`. Allowlist is intentionally narrow to eliminate the entire class of
 /// CSS-injection and resource-fetch bypasses rather than enumerating forbidden characters.
 fn sanitize_svg_color(color: &str) -> &str {
     let s = color.trim();
-    if is_safe_svg_color(s) { s } else { "#d2ebff" }
+    if is_safe_svg_color(s) { s } else { "#c8973f" }
 }
 
 /// Returns `true` when `s` is a safe CSS color for SVG `fill`: hex colours or `none`/`transparent`.
@@ -571,7 +571,7 @@ mod tests {
             None,
         );
         assert!(
-            html.contains(r##"fill="#d2ebff""##),
+            html.contains(r##"fill="#c8973f""##),
             "expected default icon color in fill attribute"
         );
     }
@@ -596,7 +596,7 @@ mod tests {
             "expected custom icon color in fill attribute"
         );
         assert!(
-            !html.contains(r##"fill="#d2ebff""##),
+            !html.contains(r##"fill="#c8973f""##),
             "default color should not appear in fill when overridden"
         );
     }
@@ -618,7 +618,7 @@ mod tests {
             None,
         );
         assert!(
-            html.contains(r##"fill="#d2ebff""##),
+            html.contains(r##"fill="#c8973f""##),
             "url() color must fall back to default"
         );
         assert!(
@@ -644,7 +644,7 @@ mod tests {
             None,
         );
         assert!(
-            html.contains(r##"fill="#d2ebff""##),
+            html.contains(r##"fill="#c8973f""##),
             "named color must fall back to default"
         );
         assert!(

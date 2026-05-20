@@ -7,11 +7,17 @@ permalink: /configuration
 
 ## Configuration
 
-The worker reads its configuration from the `WORKER_CONFIG` environment variable, which must contain valid TOML. You can serve different messages to visitors in different regions using locale-keyed sections (e.g. `[banner.en_GB]`, `[banner.fr_FR]`), and optionally define a locale-free default that applies when no locale matches.
+The worker reads its configuration from the `WORKER_CONFIG` environment variable,
+which must contain valid TOML. You can serve different messages to visitors in
+different regions using locale-keyed sections (e.g. `[banner.en_GB]`, `[banner.fr_FR]`),
+and optionally define a locale-free default that applies when no locale matches.
 
 ### Unqualified defaults
 
-`[banner]`, `[buttons]`, and `[privacy_policy]` can each be written without a locale suffix. These unqualified sections act as a catch-all for visitors whose locale does not match any specific entry. This lets you configure a single language without needing locale keys at all:
+`[banner]`, `[buttons]`, and `[privacy_policy]` can each be written without a locale
+suffix. These unqualified sections act as a catch-all for visitors whose locale
+does not match any specific entry. This lets you configure a single language without
+needing locale keys at all:
 
 ```toml
 [banner]
@@ -25,59 +31,66 @@ accept_label = "Accept"
 decline_label = "Decline"
 ```
 
-You can also mix unqualified defaults with locale-specific sections. The locale-specific entry takes priority when it matches; the unqualified section is the final fallback.
+You can also mix unqualified defaults with locale-specific sections. The
+locale-specific entry takes priority when it matches; the unqualified section is
+the final fallback.
 
 ### Locale resolution
 
-The worker reads the visitor's `Accept-Language` request header and resolves it to a configuration locale using a three-tier fallback:
+The worker reads the visitor's `Accept-Language` request header and resolves it
+to a configuration locale using a three-tier fallback:
 
 1. Exact match — `fr_FR` matches `[banner.fr_FR]`
 2. Language prefix — `en_US` matches `en_GB` (first key starting with `en`)
-3. Unqualified default — falls back to `[banner]` (no locale suffix) if no locale key matches; if there is no unqualified default either, the page is passed through unmodified
+3. Unqualified default — falls back to `[banner]` (no locale suffix) if no locale
+   key matches; if there is no unqualified default either, the page is passed
+   through unmodified
 
 ### `[banner.<locale>]`
 
-| Field | Type | Description |
-|---|---|---|
-| `theme` | string | Visual theme. See [Themes](../themes). |
-| `style` | string | Banner position. See [Themes](../themes). |
+| Field             | Type            | Description                                                                                    |
+| ----------------- | --------------- | ---------------------------------------------------------------------------------------------- |
+| `theme`           | string          | Visual theme. See [Themes](../themes).                                                         |
+| `style`           | string          | Banner position. See [Themes](../themes).                                                      |
 | `overlay_opacity` | integer (0–100) | Background overlay opacity in percent. Use `0` for position styles that don't show an overlay. |
-| `message` | string | The consent message shown to the visitor. |
+| `message`         | string          | The consent message shown to the visitor.                                                      |
 
 ### `[buttons.<locale>]`
 
-| Field | Type | Description |
-|---|---|---|
-| `accept_label` | string | Label for the accept button. |
+| Field           | Type   | Description                   |
+| --------------- | ------ | ----------------------------- |
+| `accept_label`  | string | Label for the accept button.  |
 | `decline_label` | string | Label for the decline button. |
 
 ### `[privacy_policy.<locale>]` _(optional)_
 
 When present, a link to your privacy policy is shown inside the banner.
 
-| Field | Type | Description |
-|---|---|---|
-| `url` | string | URL of your privacy policy page. |
-| `link_text` | string | Visible link text. |
+| Field       | Type   | Description                      |
+| ----------- | ------ | -------------------------------- |
+| `url`       | string | URL of your privacy policy page. |
+| `link_text` | string | Visible link text.               |
 
 ### `[scripts]`
 
-Lists the scripts to load based on consent. Each entry has a `name` (for your reference only) and a `src` (the script URL).
+Lists the scripts to load based on consent. Each entry has a `name` (for your
+reference only) and a `src` (the script URL).
 
-| Field | Type | Description |
-|---|---|---|
-| `essential` | array | Scripts always loaded, regardless of consent. |
-| `tracking` | array | Scripts loaded only when the visitor accepts cookies. |
+| Field       | Type  | Description                                           |
+| ----------- | ----- | ----------------------------------------------------- |
+| `essential` | array | Scripts always loaded, regardless of consent.         |
+| `tracking`  | array | Scripts loaded only when the visitor accepts cookies. |
 
 ### `[settings]` _(optional)_
 
-Global settings that apply across all locales. Controls the position and appearance of the settings button (the cookie icon that lets visitors reopen the banner).
+Global settings that apply across all locales. Controls the position and appearance
+of the settings button (the cookie icon that lets visitors reopen the banner).
 
-| Field | Type | Default | Description |
-|---|---|---|---|
-| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button. |
-| `right` | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button. |
-| `color` | string | `#d2ebff` | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
+| Field    | Type    | Default            | Description                                                                                                                                     |
+| -------- | ------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `bottom` | integer | CSS default (16px) | Pixels from the bottom of the viewport for the settings button.                                                                                 |
+| `right`  | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button.                                                                                  |
+| `color`  | string  | `#c8973f`          | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
 
 ```toml
 [settings]
@@ -130,5 +143,5 @@ tracking = [
 [settings]
 bottom = 24
 right = 32
-color = "#d2ebff"
+color = "#c8973f"
 ```
