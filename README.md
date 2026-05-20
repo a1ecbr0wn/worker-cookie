@@ -195,6 +195,20 @@ of the settings button (the cookie icon that lets visitors reopen the banner).
 ### Full example
 
 ```toml
+[banner]
+theme = "hacker"
+style = "box-bottom-right"
+overlay_opacity = 0
+message = "We use cookies to improve your experience. Essential cookies are always enabled."
+
+[buttons]
+accept_label = "Accept All"
+decline_label = "Decline Non-Essential"
+
+[privacy_policy]
+url = "https://example.com/privacy"
+link_text = "Read our privacy policy"
+
 [banner.en_GB]
 theme = "hacker"
 style = "box-bottom-right"
