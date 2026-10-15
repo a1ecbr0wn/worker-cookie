@@ -94,7 +94,8 @@ fn resolve_locale(cfg: &WorkerConfig, locale: &str) -> String {
 mod tests {
     use super::*;
     use crate::config::{
-        BannerConfig, ButtonsConfig, ScriptEntry, ScriptsConfig, SettingsConfig, WorkerConfig,
+        BannerConfig, ButtonsConfig, BypassConfig, ScriptEntry, ScriptsConfig, SettingsConfig,
+        WorkerConfig,
     };
     use std::collections::HashMap;
 
@@ -141,6 +142,7 @@ mod tests {
             privacy_policy: HashMap::new(),
             scripts: ScriptsConfig::default(),
             settings: SettingsConfig::default(),
+            bypass: BypassConfig::default(),
         }
     }
 
@@ -178,6 +180,7 @@ mod tests {
                 }],
             },
             settings: SettingsConfig::default(),
+            bypass: BypassConfig::default(),
         }
     }
 

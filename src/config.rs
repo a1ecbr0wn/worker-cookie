@@ -60,10 +60,34 @@ pub struct ScriptsConfig {
     pub tracking: Vec<ScriptEntry>,
 }
 
+/// Request paths that the worker passes straight through to the origin, configured via `[bypass]`.
+#[derive(Debug, Clone, Deserialize, Default, PartialEq)]
+pub struct BypassConfig {
+    /// Path prefixes (e.g. `/api/`); any request whose path starts with one is not processed.
+    #[serde(default)]
+    pub paths: Vec<String>,
+}
+
+impl BypassConfig {
+    /// Returns `true` if `path` starts with any configured bypass prefix.
+    ///
+    /// Matching is a case-sensitive raw string prefix check against the percent-encoded
+    /// path. The query string is never compared.
+    ///
+    /// # Parameters
+    /// - `path`: the percent-encoded URL path of the incoming request, without the query string (e.g. `/api/v1/users`).
+    pub fn matches(&self, path: &str) -> bool {
+        self.paths
+            .iter()
+            .any(|prefix| path.starts_with(prefix.as_str()))
+    }
+}
+
 /// Locale-keyed configuration map where the empty string `""` represents the
 /// unqualified default section (e.g. `[banner]` with no locale suffix).
 ///
 /// `settings` provides global settings button positioning and icon colour that apply across all locales.
+/// `bypass` lists path prefixes that skip banner injection entirely.
 #[derive(Debug, Clone)]
 pub struct WorkerConfig {
     pub banner: HashMap<String, BannerConfig>,
@@ -71,6 +95,7 @@ pub struct WorkerConfig {
     pub privacy_policy: HashMap<String, PrivacyPolicyConfig>,
     pub scripts: ScriptsConfig,
     pub settings: SettingsConfig,
+    pub bypass: BypassConfig,
 }
 
 /// Splits a TOML table into a locale-keyed map, with an optional unqualified
@@ -120,6 +145,10 @@ where
 ///
 /// The `[settings]` section is optional and applies global settings button positioning
 /// (bottom and right offsets). If absent, defaults to empty (CSS defaults apply).
+///
+/// The `[bypass]` section is optional and lists path prefixes that skip processing.
+/// If absent, no paths are bypassed. Returns an error if any bypass path does not
+/// start with `/`.
 pub fn parse(raw: &str) -> std::result::Result<WorkerConfig, String> {
     let mut table: toml::Table = raw.parse().map_err(|e| format!("TOML parse error: {e}"))?;
 
@@ -166,12 +195,23 @@ pub fn parse(raw: &str) -> std::result::Result<WorkerConfig, String> {
         None => SettingsConfig::default(),
     };
 
+    let bypass: BypassConfig = match table.remove("bypass") {
+        Some(v) => v.try_into().map_err(|e| format!("[bypass]: {e}"))?,
+        None => BypassConfig::default(),
+    };
+    if let Some(bad) = bypass.paths.iter().find(|p| !p.starts_with('/')) {
+        return Err(format!(
+            "[bypass]: path {bad:?} must start with '/' (an empty prefix would bypass every request)"
+        ));
+    }
+
     Ok(WorkerConfig {
         banner: split_section(&banner_table)?,
         buttons: split_section(&buttons_table)?,
         privacy_policy: split_section(&privacy_table)?,
         scripts,
         settings,
+        bypass,
     })
 }
 
@@ -408,6 +448,45 @@ decline_label = "No"
                 color: Some("#aabbcc".to_string()),
             }
         );
+    }
+
+    #[test]
+    fn parses_bypass_section() {
+        let toml = format!("{VALID_TOML}\n[bypass]\npaths = [\"/api/\", \"/health\"]\n");
+        let cfg = parse(&toml).expect("bypass section should parse");
+        assert_eq!(
+            cfg.bypass,
+            BypassConfig {
+                paths: vec!["/api/".to_string(), "/health".to_string()],
+            }
+        );
+    }
+
+    #[test]
+    fn bypass_defaults_to_empty_and_matches_nothing() {
+        let cfg = parse(VALID_TOML).expect("valid TOML should parse");
+        assert_eq!(cfg.bypass, BypassConfig::default());
+        assert!(!cfg.bypass.matches("/anything"));
+    }
+
+    /// Empty or non-absolute prefixes are rejected: `""` would bypass every request and
+    /// `api/` could never match.
+    #[test]
+    fn rejects_empty_or_relative_bypass_paths() {
+        for bad in ["\"\"", "\"api/\""] {
+            let toml = format!("{VALID_TOML}\n[bypass]\npaths = [{bad}]\n");
+            assert!(parse(&toml).is_err(), "{bad} should be rejected");
+        }
+    }
+
+    #[test]
+    fn bypass_matches_on_path_prefix_only() {
+        let bypass = BypassConfig {
+            paths: vec!["/api/".to_string()],
+        };
+        assert!(bypass.matches("/api/v1/users"));
+        assert!(!bypass.matches("/about/api/"));
+        assert!(!bypass.matches("/apix"));
     }
 
     #[test]

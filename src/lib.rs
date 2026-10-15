@@ -12,12 +12,22 @@ mod utils;
 /// already carries a `userConsent` cookie, injects only the script loader; otherwise injects
 /// the full banner UI.
 ///
+/// Requests whose path starts with a `[bypass] paths` prefix skip all processing and are
+/// forwarded to the origin as-is (method, headers and body preserved). The prefix match is
+/// case-sensitive, applies to the percent-encoded path, and ignores the query string.
+///
 /// Call this from your own `#[event(fetch)]` handler — see `worker-cookie-template` for a
 /// minimal entry point.
 pub async fn run(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     utils::set_panic_hook();
     let cfg = config::load(&env)?;
     let url = req.url()?;
+
+    if cfg.bypass.matches(url.path()) {
+        console_debug!("bypassing {}", url.path());
+        return Fetch::Request(req).send().await;
+    }
+
     let (locale, existing_consent) = consent::extract_from_request(&req);
 
     let upstream = Fetch::Request(Request::new(url.as_str(), Method::Get)?);
@@ -26,7 +36,7 @@ pub async fn run(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     let content_type = upstream_resp
         .headers()
         .get("content-type")?
-        .map_or_else(String::new, std::convert::identity);
+        .unwrap_or_else(String::new);
 
     if !content_type.contains("text/html") {
         return Ok(upstream_resp);

@@ -18,8 +18,10 @@ and load scripts immediately.
   them if consent was declined
 - **Consent revocation**: cookie icon in the corner lets users reopen the banner
   at any time
-- **Server-side bypass**: when `userConsent` cookie is already set, the banner
+- **Server-side consent check**: when `userConsent` cookie is already set, the banner
   is pre-hidden and scripts are loaded inline — no client-side cookie read needed
+- **Path bypass**: configured path prefixes (e.g. `/api/`) are passed straight to
+  the origin with no banner injection
 
 ## Setup
 
@@ -194,6 +196,26 @@ of the settings button (the cookie icon that lets visitors reopen the banner).
 | `right` | integer | CSS default (16px) | Pixels from the right of the viewport for the settings button. |
 | `color` | string | `#c8973f` | Hex colour for the cookie icon fill (`#rgb`, `#rrggbb`, `#rgba`, `#rrggbbaa`), or `none`/`transparent`. Other formats fall back to the default. |
 
+### `[bypass]` *(optional)*
+
+Path prefixes the worker leaves alone. A request whose path starts with one of the
+prefixes is forwarded to the origin unchanged (method, headers and body preserved):
+no banner is injected and consent cookies are not read.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `paths` | array of strings | `[]` | Path prefixes to bypass. Each must start with `/`. |
+
+```toml
+[bypass]
+paths = ["/api/", "/health"]
+```
+
+Matching is a case-sensitive string prefix on the percent-encoded path; the query
+string is ignored. `/api` therefore also matches `/apixyz`, so end a prefix with `/`
+to match a directory. `"/"` bypasses every request. Empty prefixes and prefixes that
+do not start with `/` are rejected when the configuration is loaded.
+
 ### Full example
 
 ```toml
@@ -251,6 +273,9 @@ tracking = [
 bottom = 24
 right = 32
 color = "#c8973f"
+
+[bypass]
+paths = ["/api/", "/health"]
 ```
 
 ## Contributing
