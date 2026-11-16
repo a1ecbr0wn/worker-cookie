@@ -15,7 +15,7 @@ default = ["console_error_panic_hook"]
 
 [dependencies]
 worker = { version = "0.8.3" }
-worker-macros = { version = "0.8.3" }
+worker-macros = { version = "0.9.0" }
 serde = { version = "1", features = ["derive"] }
 toml = "1"
 cfg-if = "1"
